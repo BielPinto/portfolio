@@ -1,4 +1,17 @@
-# React + TypeScript + Vite
+# Portfolio — front-end (`portifolio_web`)
+
+React + TypeScript + Vite SPA. **Architecture, folder layout, and conventions**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Scripts
+
+- `npm run dev` — development server
+- `npm run build` — production build
+- `npm run preview` — preview the production build
+- `npm run lint` — ESLint
+
+---
+
+## React + TypeScript + Vite (template)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
