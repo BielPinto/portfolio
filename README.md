@@ -62,6 +62,14 @@ curl -sS -X POST http://127.0.0.1:8080/contact \
 
 Successful responses return HTTP **201** with `id` and `created_at`.
 
+## Swagger (OpenAPI)
+
+Interactive docs are served at **`/swagger/index.html`** (e.g. `http://127.0.0.1:8080/swagger/index.html`). The spec is generated from handler comments; after changing annotations, regenerate from `cmd/api` with:
+
+```bash
+go generate ./cmd/api
+```
+
 ## Architecture plan
 
 Work on this service should follow the **portfolio backend API plan**: Gin, PostgreSQL, Docker, and **Clean Architecture** layering (handlers → services → repositories → database; configuration and migrations as described in that plan).

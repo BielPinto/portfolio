@@ -1,3 +1,13 @@
+// Package main runs the portfolio HTTP API.
+//
+// @title                       Portfolio API
+// @version                     0.1.0
+// @description                 HTTP API for portfolio health checks and contact form submissions.
+// @host                        localhost:8080
+// @BasePath                    /
+// @schemes                     http https
+//
+//go:generate go run github.com/swaggo/swag/cmd/swag@latest init -g main.go -o docs -d .,../../internal/handlers,../../internal/models
 package main
 
 import (
@@ -10,7 +20,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
+	docs "portifolio_backend/cmd/api/docs"
 	"portifolio_backend/config"
 	"portifolio_backend/internal/db"
 	"portifolio_backend/internal/handlers"
@@ -63,11 +76,16 @@ func main() {
 		r.Use(rateMW)
 	}
 
+	docs.SwaggerInfo.Host = "localhost:" + cfg.Port
+	docs.SwaggerInfo.Version = apiVersion
+
 	handlers.RegisterPublicRoutes(r, handlers.PublicRouterDeps{
 		Pool:     pool,
 		Version:  apiVersion,
 		Contacts: contactH,
 	})
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	addr := ":" + cfg.Port
 	srv := &http.Server{

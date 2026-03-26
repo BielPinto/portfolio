@@ -20,12 +20,13 @@ func RegisterPublicRoutes(r *gin.Engine, d PublicRouterDeps) {
 		prefix = "/api/v1"
 	}
 
-	r.GET("/health", Health(d.Pool, d.Version))
+	health := NewHealthHandler(d.Pool, d.Version)
+	r.GET("/health", health.Get)
 	r.POST("/contact", d.Contacts.SubmitContact)
 
 	v1 := r.Group(prefix)
 	{
-		v1.GET("/health", Health(d.Pool, d.Version))
+		v1.GET("/health", health.Get)
 		v1.POST("/contact", d.Contacts.SubmitContact)
 	}
 }

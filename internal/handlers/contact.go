@@ -24,6 +24,18 @@ func NewContactHandler(svc *services.ContactService) *ContactHandler {
 }
 
 // SubmitContact handles POST /contact.
+//
+// @Summary      Submit contact message
+// @Description  Persists a contact form submission (name, email, message).
+// @Tags         contact
+// @Accept       json
+// @Produce      json
+// @Param        body body models.SubmitContactRequest true "Payload"
+// @Success      201 {object} models.SubmitContactResponse
+// @Failure      400 {object} ErrorResponseBody
+// @Failure      500 {object} ErrorResponseBody
+// @Router       /contact [post]
+// @Router       /api/v1/contact [post]
 func (h *ContactHandler) SubmitContact(c *gin.Context) {
 	var req models.SubmitContactRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
