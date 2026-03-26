@@ -48,7 +48,7 @@ info:
   title: Portfolio API
   version: 0.1.0
 paths:
-  /api/v1/contact:
+  /api/v1/public/contact:
     post:
       consumes:
       - application/json
@@ -78,7 +78,7 @@ paths:
       summary: Submit contact message
       tags:
       - contact
-  /api/v1/health:
+  /api/v1/public/health:
     get:
       description: Returns service status and optional database connectivity.
       produces:

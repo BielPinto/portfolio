@@ -4,6 +4,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/mail"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/google/uuid"
 
 	"portifolio_backend/internal/models"
+	"portifolio_backend/internal/ports"
 )
 
 // ContactRepository persists new contact submissions.
@@ -21,12 +23,17 @@ type ContactRepository interface {
 
 // ContactService orchestrates contact submission (validation + persistence).
 type ContactService struct {
-	repo ContactRepository
+	repo      ContactRepository
+	publisher ports.EventPublisher
+	log       *slog.Logger
 }
 
-// NewContactService returns a ContactService with the given repository.
-func NewContactService(repo ContactRepository) *ContactService {
-	return &ContactService{repo: repo}
+// NewContactService returns a ContactService with the given repository and optional event publisher.
+func NewContactService(repo ContactRepository, publisher ports.EventPublisher, log *slog.Logger) *ContactService {
+	if publisher == nil {
+		publisher = ports.NoOpEventPublisher{}
+	}
+	return &ContactService{repo: repo, publisher: publisher, log: log}
 }
 
 // SubmitContact validates input and persists a new contact.
@@ -42,6 +49,12 @@ func (s *ContactService) SubmitContact(ctx context.Context, req models.SubmitCon
 	id, createdAt, err := s.repo.Insert(ctx, name, email, message)
 	if err != nil {
 		return models.SubmitContactResponse{}, fmt.Errorf("submit contact: %w", err)
+	}
+
+	if pubErr := s.publisher.PublishContactCreated(ctx, ports.ContactCreatedEvent{ID: id}); pubErr != nil {
+		if s.log != nil {
+			s.log.Warn("contact persisted but event publish failed", "contact_id", id, "error", pubErr)
+		}
 	}
 
 	return models.SubmitContactResponse{ID: id, CreatedAt: createdAt}, nil

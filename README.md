@@ -18,6 +18,7 @@ Copy `.env.example` to `.env` and adjust values, or set the same variables in yo
 | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_SSLMODE` | Used only when `DATABASE_URL` is empty. |
 | `LOG_LEVEL` | `debug`, `info`, `warn`, or `error` (default: `info`). |
 | `RATE_LIMIT` | [ulule/limiter](https://github.com/ulule/limiter) rate string (e.g. `100-M`); empty, `0`, or `off` disables limiting. |
+| `ADMIN_API_KEY` | Optional. If set, registers `/api/v1/admin/*` with auth (`X-Admin-Key` or `Authorization: Bearer`). Currently exposes `GET /api/v1/admin/status` as a smoke check; add list/stats routes here later. |
 
 ## Run with Docker Compose
 
@@ -50,7 +51,7 @@ Health (includes DB check when a pool is configured):
 curl -sS http://127.0.0.1:8080/health
 ```
 
-The same routes exist under `/api/v1` (e.g. `GET /api/v1/health`).
+Versioned public routes live under **`/api/v1/public`** (e.g. `GET /api/v1/public/health`, `POST /api/v1/public/contact`).
 
 Submit a contact message:
 
@@ -61,6 +62,12 @@ curl -sS -X POST http://127.0.0.1:8080/contact \
 ```
 
 Successful responses return HTTP **201** with `id` and `created_at`.
+
+If `ADMIN_API_KEY` is set, verify the admin namespace (expects the same key in the header):
+
+```bash
+curl -sS http://127.0.0.1:8080/api/v1/admin/status -H "X-Admin-Key: $ADMIN_API_KEY"
+```
 
 ## Swagger (OpenAPI)
 
@@ -77,7 +84,7 @@ Work on this service should follow the **portfolio backend API plan**: Gin, Post
 The plan defines, among other things:
 
 - **Layout:** `cmd/api`, `internal/handlers`, `internal/services`, `internal/repositories`, `internal/models`, `internal/middleware`, optional `internal/ports`, `config`, `migrations`, `pkg`.
-- **Endpoints:** `GET /health`, `POST /contact` (JSON body `name`, `email`, `message`); versioned duplicates under `/api/v1`.
+- **Endpoints:** `GET /health`, `POST /contact` (JSON body `name`, `email`, `message`); versioned duplicates under `/api/v1/public/...`; optional admin group under `/api/v1/admin` when `ADMIN_API_KEY` is set.
 - **Data:** `contacts` table (UUID, timestamps, validation limits aligned with the plan).
 - **Cross-cutting:** structured logging (`slog`), request IDs, recovery, in-memory rate limiting by IP; CORS optional when the web app calls this API from the browser.
 - **Docker:** multi-stage image and `docker-compose` with PostgreSQL.

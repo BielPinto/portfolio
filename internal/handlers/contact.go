@@ -35,7 +35,7 @@ func NewContactHandler(svc *services.ContactService) *ContactHandler {
 // @Failure      400 {object} ErrorResponseBody
 // @Failure      500 {object} ErrorResponseBody
 // @Router       /contact [post]
-// @Router       /api/v1/contact [post]
+// @Router       /api/v1/public/contact [post]
 func (h *ContactHandler) SubmitContact(c *gin.Context) {
 	var req models.SubmitContactRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

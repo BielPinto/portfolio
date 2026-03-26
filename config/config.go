@@ -16,6 +16,8 @@ type Config struct {
 	// RateLimit is a ulule/limiter formatted rate (e.g. "100-M" = 100 requests per minute per IP).
 	// Empty, "0", or "off" disables in-memory rate limiting.
 	RateLimit string
+	// AdminAPIKey, when non-empty, registers the /api/v1/admin route group with auth middleware (routes added later).
+	AdminAPIKey string
 }
 
 // Load reads configuration from environment variables with safe defaults for local development.
@@ -38,6 +40,7 @@ func Load() (*Config, error) {
 		DatabaseURL: dbURL,
 		LogLevel:    parseLogLevel(os.Getenv("LOG_LEVEL")),
 		RateLimit:   rl,
+		AdminAPIKey: strings.TrimSpace(os.Getenv("ADMIN_API_KEY")),
 	}, nil
 }
 

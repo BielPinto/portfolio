@@ -28,6 +28,7 @@ import (
 	"portifolio_backend/internal/db"
 	"portifolio_backend/internal/handlers"
 	"portifolio_backend/internal/middleware"
+	"portifolio_backend/internal/ports"
 	"portifolio_backend/internal/repositories"
 	"portifolio_backend/internal/services"
 	"portifolio_backend/pkg/logger"
@@ -59,7 +60,8 @@ func main() {
 	}
 
 	contactRepo := repositories.NewContactRepository(pool)
-	contactSvc := services.NewContactService(contactRepo)
+	publisher := ports.NoOpEventPublisher{}
+	contactSvc := services.NewContactService(contactRepo, publisher, log)
 	contactH := handlers.NewContactHandler(contactSvc)
 
 	gin.SetMode(gin.ReleaseMode)
@@ -79,10 +81,11 @@ func main() {
 	docs.SwaggerInfo.Host = "localhost:" + cfg.Port
 	docs.SwaggerInfo.Version = apiVersion
 
-	handlers.RegisterPublicRoutes(r, handlers.PublicRouterDeps{
-		Pool:     pool,
-		Version:  apiVersion,
-		Contacts: contactH,
+	handlers.RegisterRoutes(r, handlers.RouterDeps{
+		Pool:        pool,
+		Version:     apiVersion,
+		Contacts:    contactH,
+		AdminAPIKey: cfg.AdminAPIKey,
 	})
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

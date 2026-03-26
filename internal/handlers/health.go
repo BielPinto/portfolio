@@ -27,7 +27,7 @@ func NewHealthHandler(pool *pgxpool.Pool, version string) *HealthHandler {
 	return &HealthHandler{pool: pool, version: version}
 }
 
-// Get handles GET /health (and GET /api/v1/health).
+// Get handles GET /health (and GET /api/v1/public/health).
 //
 // @Summary      Health check
 // @Description  Returns service status and optional database connectivity.
@@ -36,7 +36,7 @@ func NewHealthHandler(pool *pgxpool.Pool, version string) *HealthHandler {
 // @Success      200 {object} HealthResponse "OK"
 // @Failure      503 {object} HealthResponse "Database unavailable"
 // @Router       /health [get]
-// @Router       /api/v1/health [get]
+// @Router       /api/v1/public/health [get]
 func (h *HealthHandler) Get(c *gin.Context) {
 	if h.pool == nil {
 		respondJSON(c, http.StatusOK, HealthResponse{Status: "ok", Version: h.version})

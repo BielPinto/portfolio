@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/contact": {
+        "/api/v1/public/contact": {
             "post": {
                 "description": "Persists a contact form submission (name, email, message).",
                 "consumes": [
@@ -61,7 +61,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/health": {
+        "/api/v1/public/health": {
             "get": {
                 "description": "Returns service status and optional database connectivity.",
                 "produces": [
