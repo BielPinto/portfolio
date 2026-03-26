@@ -14,6 +14,7 @@ import (
 	"portifolio_backend/config"
 	"portifolio_backend/internal/db"
 	"portifolio_backend/internal/handlers"
+	"portifolio_backend/internal/middleware"
 	"portifolio_backend/internal/repositories"
 	"portifolio_backend/internal/services"
 	"portifolio_backend/pkg/logger"
@@ -50,7 +51,17 @@ func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-	r.Use(gin.Recovery())
+	r.Use(middleware.RequestID())
+	r.Use(middleware.Recovery(log))
+	r.Use(middleware.RequestLogger(log))
+	rateMW, err := middleware.NewRateLimiter(cfg.RateLimit, log)
+	if err != nil {
+		log.Error("invalid RATE_LIMIT", "error", err)
+		os.Exit(1)
+	}
+	if rateMW != nil {
+		r.Use(rateMW)
+	}
 
 	handlers.RegisterPublicRoutes(r, handlers.PublicRouterDeps{
 		Pool:     pool,

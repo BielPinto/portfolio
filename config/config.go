@@ -13,6 +13,9 @@ type Config struct {
 	Port        string
 	DatabaseURL string
 	LogLevel    slog.Level
+	// RateLimit is a ulule/limiter formatted rate (e.g. "100-M" = 100 requests per minute per IP).
+	// Empty, "0", or "off" disables in-memory rate limiting.
+	RateLimit string
 }
 
 // Load reads configuration from environment variables with safe defaults for local development.
@@ -26,10 +29,15 @@ func Load() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	rl := strings.TrimSpace(os.Getenv("RATE_LIMIT"))
+	if rl == "" {
+		rl = "100-M"
+	}
 	return &Config{
 		Port:        port,
 		DatabaseURL: dbURL,
 		LogLevel:    parseLogLevel(os.Getenv("LOG_LEVEL")),
+		RateLimit:   rl,
 	}, nil
 }
 
