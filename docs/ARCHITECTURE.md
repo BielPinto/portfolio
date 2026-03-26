@@ -133,6 +133,11 @@ Components under `components/ui/` take props and classes; they do not fetch data
 
 SPA: in production, the HTTP server must serve `index.html` for these paths (**fallback**) to avoid 404 on direct refresh or deep links.
 
+## Testing
+
+- **End-to-end**: Playwright specs live in `e2e/` next to the app root. They cover navigation, theme, locale, and the contact form against the Vite dev server (or a URL you provide). How to run tests, env vars, and CI notes are in [E2E.md](./E2E.md).
+- **Unit / component**: not configured yet; Vitest (or similar) is a good fit for logic and isolated components without a full browser.
+
 ## Design tokens (Tailwind)
 
 Defined in `index.css` under `@theme`: `--color-primary`, `--color-ink`, `--color-surface`, `--color-night`, `--font-sans` (Inter), etc. Dark mode reuses the same tokens with `dark:` utilities.
@@ -140,7 +145,7 @@ Defined in `index.css` under `@theme`: `--color-primary`, `--color-ink`, `--colo
 ## Out of scope for now
 
 - API layer / React Query / server-side rendering.
-- Automated tests (E2E or unit) — can be added under `tests/` or with Vitest.
+- Unit or component test runner (e.g. Vitest) — E2E is documented in [E2E.md](./E2E.md).
 - Per-route meta tags (advanced SEO) — optional via `react-helmet-async` or similar.
 
 ## How to extend
