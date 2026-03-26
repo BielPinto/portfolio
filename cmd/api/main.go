@@ -3,15 +3,23 @@ package main
 import (
 	"context"
 	"log/slog"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"portifolio_backend/config"
 	"portifolio_backend/internal/db"
+	"portifolio_backend/internal/handlers"
+	"portifolio_backend/internal/repositories"
+	"portifolio_backend/internal/services"
 	"portifolio_backend/pkg/logger"
 )
+
+const apiVersion = "0.1.0"
 
 func main() {
 	cfg, err := config.Load()
@@ -36,6 +44,43 @@ func main() {
 		os.Exit(1)
 	}
 
-	_ = gin.New()
-	log.Info("portifolio_backend api initialized", "port", cfg.Port)
+	contactRepo := repositories.NewContactRepository(pool)
+	contactSvc := services.NewContactService(contactRepo)
+	contactH := handlers.NewContactHandler(contactSvc)
+
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
+	r.Use(gin.Recovery())
+
+	handlers.RegisterPublicRoutes(r, handlers.PublicRouterDeps{
+		Pool:     pool,
+		Version:  apiVersion,
+		Contacts: contactH,
+	})
+
+	addr := ":" + cfg.Port
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           r,
+		ReadHeaderTimeout: 10 * time.Second,
+	}
+
+	go func() {
+		log.Info("listening", "addr", addr)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error("server error", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer shutdownCancel()
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Error("graceful shutdown failed", "error", err)
+	}
+	log.Info("server stopped")
 }
