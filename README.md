@@ -1,7 +1,7 @@
 # portifolio_backend
 
 Go HTTP API for the portfolio project (contact submissions, health checks, and room for future admin/analytics).
-
+Golang + Testcontainers
 ## Prerequisites
 
 - **Go** 1.25+ (see `go.mod`) for local runs without Docker.

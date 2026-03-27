@@ -19,6 +19,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -68,6 +69,17 @@ func main() {
 	r := gin.New()
 	r.Use(middleware.RequestID())
 	r.Use(middleware.Recovery(log))
+	corsCfg := cors.Config{
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		AllowCredentials: false,
+	}
+	if len(cfg.CorsOrigins) > 0 {
+		corsCfg.AllowOrigins = cfg.CorsOrigins
+	} else {
+		corsCfg.AllowAllOrigins = true
+	}
+	r.Use(cors.New(corsCfg))
 	r.Use(middleware.RequestLogger(log))
 	rateMW, err := middleware.NewRateLimiter(cfg.RateLimit, log)
 	if err != nil {
