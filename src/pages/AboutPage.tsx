@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom'
+import portraitSrc from '@/assets/myself.jpeg'
 import { ButtonLink } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
 import { useLanguage } from '@/context/language-context'
-
-const portraitSrc =
-  'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80'
 
 export function AboutPage() {
   const { messages: m } = useLanguage()

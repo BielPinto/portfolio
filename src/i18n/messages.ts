@@ -115,7 +115,9 @@ const en = {
       'Tell me about your project or technical challenge...',
     successTitle: 'Message sent',
     successBody:
-      'This is a demo — no data was transmitted. Wire your backend or a form service when you are ready.',
+      'Thank you for reaching out. I will get back to you within 24–48 business hours.',
+    submitError:
+      'Something went wrong while sending your message. Please try again in a moment.',
     github: 'GitHub',
     linkedin: 'LinkedIn',
     errors: {
@@ -251,7 +253,9 @@ const pt: Messages = {
       'Conte sobre seu projeto ou desafio técnico...',
     successTitle: 'Mensagem enviada',
     successBody:
-      'Isto é uma demonstração — nenhum dado foi transmitido. Conecte seu backend ou um serviço de formulário quando estiver pronto.',
+      'Obrigado pelo contato. Responderei em até 24–48 horas úteis.',
+    submitError:
+      'Não foi possível enviar sua mensagem. Tente novamente em instantes.',
     github: 'GitHub',
     linkedin: 'LinkedIn',
     errors: {

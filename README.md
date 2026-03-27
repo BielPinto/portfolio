@@ -1,86 +1,81 @@
 # Portfolio — front-end (`portifolio_web`)
 
-React + TypeScript + Vite SPA. **Architecture, folder layout, and conventions**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+SPA em React + TypeScript + Vite. **Arquitetura e convenções**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). **Testes E2E**: [docs/E2E.md](docs/E2E.md).
 
-## Scripts
+## Pré-requisitos
 
-- `npm run dev` — development server
-- `npm run build` — production build
-- `npm run preview` — preview the production build
-- `npm run lint` — ESLint
+- **Node.js** (versão compatível com o `package.json`; recomendado: LTS atual)
+- **npm** (vem com o Node)
 
----
+## Instalação
 
-## React + TypeScript + Vite (template)
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd portifolio_web
+npm ci
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Para desenvolvimento local, `npm install` também funciona.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Como rodar
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Comando | Uso |
+|--------|-----|
+| `npm run dev` | Servidor de desenvolvimento (HMR). Por padrão escuta em `http://localhost:5173`. |
+| `npm run build` | Build de produção (`dist/`). |
+| `npm run preview` | Servir o build localmente (útil para validar o bundle antes do deploy). |
+| `npm run lint` | ESLint no projeto. |
+| `npm run test:e2e` | Playwright (ver [docs/E2E.md](docs/E2E.md)). |
+
+### Desenvolvimento com a API Go
+
+1. Suba o backend (ex.: em `portifolio_backend`, `docker compose up --build` ou `go run ./cmd/api`) na porta **8080** por padrão.
+2. Na raiz de `portifolio_web`, rode `npm run dev`.
+3. O Vite encaminha para o Go:
+   - tudo sob **`/api`** → `http://127.0.0.1:8080` (ou `VITE_API_PROXY_TARGET`);
+   - **`POST /contact`** → mesma API (o `GET /contact` continua no Vite para servir a página React).
+4. O formulário usa **`POST /contact`** com `{ name, email, message }`, alinhado ao que o backend expõe hoje. A rota versionada **`POST /api/v1/public/contact`** existe no código-fonte da API; se o `curl` para essa URL retornar 404, **reconstrua a imagem** (`docker compose up --build`) — imagens antigas só tinham `/contact` na raiz.
+
+Com isso, **não é obrigatório** definir `VITE_API_BASE_URL` no dev.
+
+Se a API estiver em outro host/porta no dev, use `VITE_API_PROXY_TARGET` (só o servidor Vite lê isso; não vai para o bundle do browser).
+
+### Build de produção
+
+Se o site estático e a API estiverem em **origens diferentes** (ex.: site na Vercel, API em outro domínio), defina **`VITE_API_BASE_URL`** no momento do build com a URL pública da API (sem barra no final). O backend precisa permitir a origem do front em **CORS** (`CORS_ORIGINS` no serviço Go).
+
+Exemplo:
+
+```bash
+VITE_API_BASE_URL=https://api.seudominio.com npm run build
 ```
+
+## Variáveis de ambiente (`.env`)
+
+O Vite só expõe ao código do cliente variáveis cujo nome começa com **`VITE_`**. Crie um arquivo **`.env`** na raiz de `portifolio_web` (ao lado do `package.json`). Não commite segredos; o `.env` costuma estar no `.gitignore`.
+
+Exemplo típico para **desenvolvimento local** com proxy (a maioria das linhas pode ficar comentada ou omitida):
+
+```env
+# Opcional: URL absoluta da API no bundle (produção ou quando não usa o proxy do Vite).
+# Vazio = mesma origem do site; em dev, use o proxy /api → backend.
+# VITE_API_BASE_URL=
+
+# Só desenvolvimento: para onde o Vite encaminha /api (default: http://127.0.0.1:8080)
+# VITE_API_PROXY_TARGET=http://127.0.0.1:8080
+```
+
+Exemplo para **build apontando para uma API em outro domínio**:
+
+```env
+VITE_API_BASE_URL=https://api.seudominio.com
+```
+
+Após alterar `.env`, reinicie `npm run dev` ou rode o build de novo — o Vite lê essas variáveis na subida.
+
+## Resumo dos scripts npm
+
+- `npm run dev` — desenvolvimento
+- `npm run build` — produção
+- `npm run preview` — pré-visualizar `dist/`
+- `npm run lint` — lint
+- `npm run test:e2e` / `test:e2e:ui` / `test:e2e:headed` — Playwright

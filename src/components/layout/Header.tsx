@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import portraitSrc from '@/assets/myself.jpeg'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language-context'
 import { LOCALES, type Locale } from '@/i18n/locale'
@@ -116,15 +117,16 @@ export function Header() {
       <Container className="flex h-16 items-center justify-between gap-4 md:h-[4.75rem]">
         <Link
           to="/"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-ink dark:text-white"
+          className="flex items-center gap-3 text-lg font-semibold tracking-tight text-ink dark:text-white"
           onClick={() => setOpen(false)}
         >
-          <span
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white"
-            aria-hidden
-          >
-            {siteConfig.logoInitials}
-          </span>
+          <img
+            src={portraitSrc}
+            alt={m.site.portraitAlt}
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-primary/25 dark:ring-primary/40"
+          />
           {siteConfig.brand}
         </Link>
 

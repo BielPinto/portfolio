@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input'
 import { Section } from '@/components/ui/Section'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
+import { submitContact } from '@/api/contact'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language-context'
 import type { Messages } from '@/i18n/messages'
@@ -43,20 +44,28 @@ function ContactFormColumn() {
     message: '',
   })
   const [errors, setErrors] = useState<FormErrors>({})
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>(
-    'idle',
-  )
+  const [status, setStatus] = useState<
+    'idle' | 'submitting' | 'success' | 'error'
+  >('idle')
 
-  function handleSubmit(ev: React.FormEvent) {
+  async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault()
     const next = validate(values, m.contact)
     setErrors(next)
     if (Object.keys(next).length > 0) return
 
     setStatus('submitting')
-    window.setTimeout(() => {
+    try {
+      const message = `Inquiry: ${values.inquiryType}\n\n${values.message.trim()}`
+      await submitContact({
+        name: values.fullName.trim(),
+        email: values.email.trim(),
+        message,
+      })
       setStatus('success')
-    }, 900)
+    } catch {
+      setStatus('error')
+    }
   }
 
   return (
@@ -217,6 +226,14 @@ function ContactFormColumn() {
                   ? m.contact.sending
                   : m.contact.sendMessage}
               </Button>
+              {status === 'error' ? (
+                <p
+                  className="mt-4 text-sm text-red-600 dark:text-red-400"
+                  role="alert"
+                >
+                  {m.contact.submitError}
+                </p>
+              ) : null}
             </div>
           </form>
         )}
