@@ -8,11 +8,11 @@ Este projeto usa **PostgreSQL**. No terminal interativo **`psql`**, comandos que
 
 ## 1. Entrar no banco (Docker Compose)
 
-Execute a partir da pasta que contém o `docker-compose.yml` (ex.: `portifolio_backend`):
+Execute a partir da **raiz do monorepo** (onde está `infra/docker/docker-compose.yml`):
 
 ```bash
-cd caminho/do/portifolio_backend
-docker compose exec postgres psql -U portifolio -d portifolio
+cd caminho/do/portfolio
+docker compose -f infra/docker/docker-compose.yml exec postgres psql -U portifolio -d portifolio
 ```
 
 Credenciais padrão deste repositório (serviço `postgres` no compose):

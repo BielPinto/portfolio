@@ -1,0 +1,10 @@
+{
+  "name": "@portfolio/api",
+  "private": true,
+  "scripts": {
+    "build": "go build -trimpath -ldflags=\"-s -w\" -o bin/api ./cmd/api",
+    "dev": "go run ./cmd/api",
+    "lint": "go vet ./...",
+    "test": "go test ./... -count=1"
+  }
+}

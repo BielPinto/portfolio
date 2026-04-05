@@ -11,8 +11,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"portifolio_backend/internal/models"
-	"portifolio_backend/internal/ports"
+	"github.com/BielPinto/portfolio/apps/api/internal/models"
+	"github.com/BielPinto/portfolio/apps/api/internal/ports"
 )
 
 type stubContactRepo struct {

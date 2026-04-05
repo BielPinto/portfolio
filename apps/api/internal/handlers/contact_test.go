@@ -16,9 +16,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"portifolio_backend/internal/models"
-	"portifolio_backend/internal/ports"
-	"portifolio_backend/internal/services"
+	"github.com/BielPinto/portfolio/apps/api/internal/models"
+	"github.com/BielPinto/portfolio/apps/api/internal/ports"
+	"github.com/BielPinto/portfolio/apps/api/internal/services"
 )
 
 func init() {

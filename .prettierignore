@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+dist
+node_modules
+.turbo
+coverage
+*.min.js
+apps/api

@@ -20,6 +20,8 @@ dist/
 # Go
 bin/
 coverage.out
+apps/api/bin/
+apps/api/api
 
 # Logs / test artifacts
 *.log

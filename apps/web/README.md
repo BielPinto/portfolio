@@ -1,35 +1,39 @@
-# Portfolio — front-end (`portifolio_web`)
+# Portfolio — front-end (`apps/web`)
 
 SPA em React + TypeScript + Vite. **Arquitetura e convenções**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). **Testes E2E**: [docs/E2E.md](docs/E2E.md).
 
+Este pacote faz parte do monorepo: instalação e scripts via **pnpm** na **raiz** do repositório (`portfolio/`). Nome do pacote: `@portfolio/web`.
+
 ## Pré-requisitos
 
-- **Node.js** (versão compatível com o `package.json`; recomendado: LTS atual)
-- **npm** (vem com o Node)
+- **Node.js** 22+ (recomendado: LTS)
+- **pnpm** 9+ (o monorepo fixa a versão em `packageManager` na raiz)
 
 ## Instalação
 
-```bash
-cd portifolio_web
-npm ci
-```
+Na raiz do monorepo:
 
-Para desenvolvimento local, `npm install` também funciona.
+```bash
+pnpm install
+```
 
 ## Como rodar
 
+Na raiz do monorepo, ou com filtro:
+
 | Comando | Uso |
 |--------|-----|
-| `npm run dev` | Servidor de desenvolvimento (HMR). Por padrão escuta em `http://localhost:5173`. |
-| `npm run build` | Build de produção (`dist/`). |
-| `npm run preview` | Servir o build localmente (útil para validar o bundle antes do deploy). |
-| `npm run lint` | ESLint no projeto. |
-| `npm run test:e2e` | Playwright (ver [docs/E2E.md](docs/E2E.md)). |
+| `pnpm dev` | Turbo: API + web em paralelo (se ambos tiverem script `dev`). |
+| `pnpm --filter @portfolio/web dev` | Servidor de desenvolvimento (HMR). Por padrão `http://localhost:5173`. |
+| `pnpm --filter @portfolio/web build` | Build de produção (`dist/`). |
+| `pnpm --filter @portfolio/web preview` | Servir o build localmente. |
+| `pnpm --filter @portfolio/web lint` | ESLint. |
+| `pnpm --filter @portfolio/web test:e2e` | Playwright (ver [docs/E2E.md](docs/E2E.md)). |
 
 ### Desenvolvimento com a API Go
 
-1. Suba o backend (ex.: em `portifolio_backend`, `docker compose up --build` ou `go run ./cmd/api`) na porta **8080** por padrão.
-2. Na raiz de `portifolio_web`, rode `npm run dev`.
+1. Suba o backend (`pnpm --filter @portfolio/api dev`, ou `docker compose -f infra/docker/docker-compose.yml up --build` a partir da raiz do monorepo) na porta **8080** por padrão.
+2. Rode `pnpm --filter @portfolio/web dev` (ou `pnpm dev`).
 3. O Vite encaminha para o Go:
    - tudo sob **`/api`** → `http://127.0.0.1:8080` (ou `VITE_API_PROXY_TARGET`);
    - **`POST /contact`** → mesma API (o `GET /contact` continua no Vite para servir a página React).

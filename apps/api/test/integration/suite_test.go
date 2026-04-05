@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 
-	"portifolio_backend/internal/db"
+	"github.com/BielPinto/portfolio/apps/api/internal/db"
 )
 
 var testPool *pgxpool.Pool

@@ -15,11 +15,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"portifolio_backend/internal/handlers"
-	"portifolio_backend/internal/models"
-	"portifolio_backend/internal/ports"
-	"portifolio_backend/internal/repositories"
-	"portifolio_backend/internal/services"
+	"github.com/BielPinto/portfolio/apps/api/internal/handlers"
+	"github.com/BielPinto/portfolio/apps/api/internal/models"
+	"github.com/BielPinto/portfolio/apps/api/internal/ports"
+	"github.com/BielPinto/portfolio/apps/api/internal/repositories"
+	"github.com/BielPinto/portfolio/apps/api/internal/services"
 )
 
 func discardLog() *slog.Logger {

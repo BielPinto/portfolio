@@ -9,7 +9,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"portifolio_backend/migrations"
+	"github.com/BielPinto/portfolio/apps/api/migrations"
 )
 
 // Migrate applies embedded SQL files in lexical order (001_..., 002_...).

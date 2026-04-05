@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 
-	"portifolio_backend/internal/models"
-	"portifolio_backend/internal/services"
+	"github.com/BielPinto/portfolio/apps/api/internal/models"
+	"github.com/BielPinto/portfolio/apps/api/internal/services"
 )
 
 // ContactHandler handles public contact endpoints.

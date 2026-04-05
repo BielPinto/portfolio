@@ -1,4 +1,4 @@
-# portifolio_backend
+# Portfolio API (`apps/api`)
 
 Go HTTP API for the portfolio project (contact submissions, health checks, and room for future admin/analytics).
 Golang + Testcontainers
@@ -22,20 +22,20 @@ Copy `.env.example` to `.env` and adjust values, or set the same variables in yo
 | `LOG_LEVEL` | `debug`, `info`, `warn`, or `error` (default: `info`). |
 | `RATE_LIMIT` | [ulule/limiter](https://github.com/ulule/limiter) rate string (e.g. `100-M`); empty, `0`, or `off` disables limiting. |
 | `ADMIN_API_KEY` | Optional. If set, registers `/api/v1/admin/*` with auth (`X-Admin-Key` or `Authorization: Bearer`). Currently exposes `GET /api/v1/admin/status` as a smoke check; add list/stats routes here later. |
-| `CORS_ORIGINS` | Comma-separated allowed browser origins for cross-origin calls (e.g. from [`portifolio_web`](../portifolio_web/) with `VITE_API_BASE_URL`). Empty allows any origin. |
+| `CORS_ORIGINS` | Comma-separated allowed browser origins for cross-origin calls (e.g. from [`apps/web`](../web/) with `VITE_API_BASE_URL`). Empty allows any origin. |
 
 ## Run with Docker Compose
 
-From this directory (`portifolio_backend`):
+From the **monorepo root** (`portfolio/`):
 
 ```bash
-docker compose up --build
+docker compose -f infra/docker/docker-compose.yml up --build
 ```
 
 The API is exposed on **port 8080**. PostgreSQL 16 runs in a separate service with a named volume; the app waits until Postgres is healthy before starting.
 
-- **Stop:** `docker compose down` (add `-v` to remove the Postgres volume).
-- **Rebuild after code changes:** `docker compose up --build`.
+- **Stop:** `docker compose -f infra/docker/docker-compose.yml down` (add `-v` to remove the Postgres volume).
+- **Rebuild after code changes:** same `up --build` command.
 
 The **Dockerfile** is multi-stage: a Go toolchain image builds a static binary (`CGO_ENABLED=0`, `-trimpath`, `-ldflags="-s -w"`), and the final image is **distroless** (`gcr.io/distroless/static-debian12:nonroot`) with a non-root user.
 

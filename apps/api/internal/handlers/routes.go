@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"portifolio_backend/internal/middleware"
+	"github.com/BielPinto/portfolio/apps/api/internal/middleware"
 )
 
 // RouterDeps groups dependencies for HTTP route registration.
