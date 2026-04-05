@@ -1,8 +1,8 @@
-# Requisitos, arquitetura e perfis de acesso — `portifolio_backend`
+# Requisitos, arquitetura e perfis de acesso — `apps/api`
 
 **English version:** [REQUIREMENTS_AND_ARCHITECTURE.en.md](./REQUIREMENTS_AND_ARCHITECTURE.en.md)
 
-Documento derivado do código e da configuração atuais do serviço HTTP em Go (Gin + PostgreSQL). Descreve o que o sistema faz hoje, restrições de qualidade, organização técnica e **como o front-end [`portifolio_web`](../../portifolio_web/) consome a API** (URLs e CORS).
+Documento derivado do código e da configuração atuais do serviço HTTP em Go (Gin + PostgreSQL). Descreve o que o sistema faz hoje, restrições de qualidade, organização técnica e **como o front-end [`apps/web`](../../web/) consome a API** (URLs e CORS).
 
 ---
 
@@ -12,9 +12,9 @@ API REST para um portfólio web: **verificação de saúde** (incluindo conectiv
 
 ---
 
-## 2. Integração com `portifolio_web` (URLs e CORS)
+## 2. Integração com `apps/web` (URLs e CORS)
 
-O repositório irmão **`portifolio_web`** (Vite + React) está alinhado aos endpoints e ao payload `{ name, email, message }` da API. Referências: [`portifolio_web/README.md`](../../portifolio_web/README.md), [`portifolio_web/src/config/api.ts`](../../portifolio_web/src/config/api.ts), [`portifolio_web/vite.config.ts`](../../portifolio_web/vite.config.ts).
+O front-end **`apps/web`** (Vite + React) está alinhado aos endpoints e ao payload `{ name, email, message }` da API. Referências: [`apps/web/README.md`](../../web/README.md), [`apps/web/src/config/api.ts`](../../web/src/config/api.ts), [`apps/web/vite.config.ts`](../../web/vite.config.ts).
 
 ### 2.1 Desenvolvimento local
 
@@ -45,7 +45,7 @@ Se o HTML do SPA e a API forem servidos pelo **mesmo host** (ex.: nginx na frent
 
 ### 2.4 Testes E2E contra a API
 
-Os testes Playwright do front podem exercitar a API diretamente quando **`PLAYWRIGHT_API_URL`** está definida (ex.: `http://127.0.0.1:8080`): `GET /health`, `POST /contact`. Ver [`portifolio_web/e2e/api.spec.ts`](../../portifolio_web/e2e/api.spec.ts).
+Os testes Playwright do front podem exercitar a API diretamente quando **`PLAYWRIGHT_API_URL`** está definida (ex.: `http://127.0.0.1:8080`): `GET /health`, `POST /contact`. Ver [`apps/web/e2e/api.spec.ts`](../../web/e2e/api.spec.ts).
 
 ---
 
@@ -130,7 +130,7 @@ O backend **não implementa contas de usuário** (sem tabela de `users`, login o
 | ID | Requisito |
 |----|-----------|
 | RNF-07 | Comparação da chave admin com `subtle.ConstantTimeCompare` para reduzir vazamento por timing. |
-| RNF-08 | CORS: métodos `GET`, `POST`, `OPTIONS`; cabeçalhos `Origin`, `Content-Type`, `Accept`; `AllowCredentials: false`. Origens permitidas via `CORS_ORIGINS` (lista separada por vírgula); se vazio, permite qualquer origem. Para o **`portifolio_web`** hospedado em domínio diferente da API, incluir a origem exata do front em `CORS_ORIGINS` (ver **§2.2**). |
+| RNF-08 | CORS: métodos `GET`, `POST`, `OPTIONS`; cabeçalhos `Origin`, `Content-Type`, `Accept`; `AllowCredentials: false`. Origens permitidas via `CORS_ORIGINS` (lista separada por vírgula); se vazio, permite qualquer origem. Para o **`apps/web`** hospedado em domínio diferente da API, incluir a origem exata do front em `CORS_ORIGINS` (ver **§2.2**). |
 | RNF-09 | Imagem Docker final **distroless**, usuário não root; binário estático (`CGO_ENABLED=0`). |
 
 ### 5.4 Observabilidade

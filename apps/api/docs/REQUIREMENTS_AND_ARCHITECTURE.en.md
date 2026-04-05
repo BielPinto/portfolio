@@ -1,8 +1,8 @@
-# Requirements, architecture, and access roles — `portifolio_backend`
+# Requirements, architecture, and access roles — `apps/api`
 
 **Portuguese version:** [REQUIREMENTS_AND_ARCHITECTURE.md](./REQUIREMENTS_AND_ARCHITECTURE.md)
 
-This document is derived from the current Go HTTP service (Gin + PostgreSQL): functional and non-functional requirements, technical structure, and **how the [`portifolio_web`](../../portifolio_web/) front-end calls the API** (URLs and CORS).
+This document is derived from the current Go HTTP service (Gin + PostgreSQL): functional and non-functional requirements, technical structure, and **how the [`apps/web`](../../web/) front-end calls the API** (URLs and CORS).
 
 ---
 
@@ -12,9 +12,9 @@ REST API for a portfolio site: **health checks** (including database connectivit
 
 ---
 
-## 2. Integration with `portifolio_web` (URLs and CORS)
+## 2. Integration with `apps/web` (URLs and CORS)
 
-The sibling repo **`portifolio_web`** (Vite + React) matches this API’s endpoints and `{ name, email, message }` JSON body. See [`portifolio_web/README.md`](../../portifolio_web/README.md), [`portifolio_web/src/config/api.ts`](../../portifolio_web/src/config/api.ts), [`portifolio_web/vite.config.ts`](../../portifolio_web/vite.config.ts).
+The **`apps/web`** package (Vite + React) matches this API’s endpoints and `{ name, email, message }` JSON body. See [`apps/web/README.md`](../../web/README.md), [`apps/web/src/config/api.ts`](../../web/src/config/api.ts), [`apps/web/vite.config.ts`](../../web/vite.config.ts).
 
 ### 2.1 Local development
 
@@ -45,7 +45,7 @@ If the SPA and the API are served under the **same host** (e.g. nginx in front o
 
 ### 2.4 E2E tests against the API
 
-Playwright specs can hit the API directly when **`PLAYWRIGHT_API_URL`** is set (e.g. `http://127.0.0.1:8080`): `GET /health`, `POST /contact`. See [`portifolio_web/e2e/api.spec.ts`](../../portifolio_web/e2e/api.spec.ts).
+Playwright specs can hit the API directly when **`PLAYWRIGHT_API_URL`** is set (e.g. `http://127.0.0.1:8080`): `GET /health`, `POST /contact`. See [`apps/web/e2e/api.spec.ts`](../../web/e2e/api.spec.ts).
 
 ---
 
@@ -130,7 +130,7 @@ The backend **does not implement end-user accounts** (no `users` table, no visit
 | ID | Requirement |
 |----|-------------|
 | RNF-07 | Admin key compared with `subtle.ConstantTimeCompare` to reduce timing leakage. |
-| RNF-08 | CORS: methods `GET`, `POST`, `OPTIONS`; headers `Origin`, `Content-Type`, `Accept`; `AllowCredentials: false`. Allowed origins from `CORS_ORIGINS` (comma-separated); if empty, any origin is allowed. For **`portifolio_web`** on a different domain than the API, list the exact front-end origin(s) in `CORS_ORIGINS` (see **§2.2**). |
+| RNF-08 | CORS: methods `GET`, `POST`, `OPTIONS`; headers `Origin`, `Content-Type`, `Accept`; `AllowCredentials: false`. Allowed origins from `CORS_ORIGINS` (comma-separated); if empty, any origin is allowed. For **`apps/web`** on a different domain than the API, list the exact front-end origin(s) in `CORS_ORIGINS` (see **§2.2**). |
 | RNF-09 | Final Docker image **distroless**, non-root user; static binary (`CGO_ENABLED=0`). |
 
 ### 5.4 Observability

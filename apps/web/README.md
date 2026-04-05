@@ -55,7 +55,7 @@ VITE_API_BASE_URL=https://api.seudominio.com npm run build
 
 ## Variáveis de ambiente (`.env`)
 
-O Vite só expõe ao código do cliente variáveis cujo nome começa com **`VITE_`**. Crie um arquivo **`.env`** na raiz de `portifolio_web` (ao lado do `package.json`). Não commite segredos; o `.env` costuma estar no `.gitignore`.
+O Vite só expõe ao código do cliente variáveis cujo nome começa com **`VITE_`**. Crie um arquivo **`.env`** em `apps/web` (ao lado do `package.json`). Não commite segredos; o `.env` costuma estar no `.gitignore`.
 
 Exemplo típico para **desenvolvimento local** com proxy (a maioria das linhas pode ficar comentada ou omitida):
 

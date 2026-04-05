@@ -16,7 +16,7 @@ E2E is slower and more brittle if overused; prefer accessibility-first selectors
 Browsers are not bundled with `@playwright/test`. Install them once per machine (or CI image):
 
 ```bash
-cd portifolio_web
+cd apps/web
 npx playwright install
 ```
 
@@ -28,7 +28,7 @@ npx playwright install --with-deps
 
 ## Running tests
 
-From `portifolio_web/`:
+From `apps/web/` (or use `pnpm --filter @portfolio/web` from the monorepo root):
 
 | Command | Purpose |
 |---------|---------|
@@ -71,7 +71,7 @@ The dev server serves the SPA without extra static server config. In **productio
 
 There is no pipeline checked into this repo yet; when you add one, a typical job would:
 
-1. Check out the repo and `cd portifolio_web`.
+1. Check out the repo and `cd apps/web`.
 2. Run `npm ci`.
 3. Run `npx playwright install --with-deps` (or cache browser binaries between runs).
 4. Run `CI=true npm run test:e2e`.

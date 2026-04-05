@@ -1,6 +1,6 @@
 # Front-end — architecture and conventions
 
-This document describes how [`portifolio_web`](../) is organized, key architectural choices, and conventions for safe evolution of the codebase.
+This document describes how the web app in [`apps/web`](../) is organized, key architectural choices, and conventions for safe evolution of the codebase.
 
 ## Stack
 
@@ -156,4 +156,4 @@ Defined in `index.css` under `@theme`: `--color-primary`, `--color-ink`, `--colo
 
 ---
 
-*Last revision aligned with the `portifolio_web` repository layout.*
+*Last revision aligned with the `apps/web` package in the portfolio monorepo.*
