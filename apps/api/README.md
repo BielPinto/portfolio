@@ -43,6 +43,10 @@ The **Dockerfile** is multi-stage: a Go toolchain image builds a static binary (
 
 You need a reachable PostgreSQL instance and a database that matches your `DATABASE_URL` or `DB_*` settings. Migrations run on startup.
 
+Copy `.env.example` to `.env` in this directory; variables are loaded automatically (`godotenv`). For Postgres started via monorepo Compose (`docker compose -f ../../infra/docker/docker-compose.yml up postgres -d`), use:
+
+`DATABASE_URL=postgres://portifolio:portifolio@localhost:5432/portifolio?sslmode=disable`
+
 ```bash
 go run ./cmd/api
 ```

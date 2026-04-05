@@ -26,6 +26,20 @@ pnpm install
 
 ## Development
 
+The API needs **PostgreSQL** reachable at the URL in `apps/api/.env` (see `apps/api/.env.example`). The app loads `.env` from `apps/api` on startup.
+
+**Typical flow (DB in Docker, API + web on the host):**
+
+```bash
+# From repo root — starts only Postgres, exposes localhost:5432
+docker compose -f infra/docker/docker-compose.yml up postgres -d
+
+# In apps/api: copy .env.example → .env and set DATABASE_URL to:
+# postgres://portifolio:portifolio@localhost:5432/portifolio?sslmode=disable
+
+pnpm dev
+```
+
 Run API and web together (Turbo starts both):
 
 ```bash

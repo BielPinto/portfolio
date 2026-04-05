@@ -19,6 +19,8 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/joho/godotenv/autoload"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
