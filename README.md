@@ -2,6 +2,9 @@
 
 Go HTTP API for the portfolio project (contact submissions, health checks, and room for future admin/analytics).
 Golang + Testcontainers
+
+**Docs:** [Requirements & architecture (PT)](docs/REQUIREMENTS_AND_ARCHITECTURE.md) · [EN](docs/REQUIREMENTS_AND_ARCHITECTURE.en.md) · [PostgreSQL / `psql` (PT)](docs/DATABASE.md)
+
 ## Prerequisites
 
 - **Go** 1.25+ (see `go.mod`) for local runs without Docker.
@@ -19,6 +22,7 @@ Copy `.env.example` to `.env` and adjust values, or set the same variables in yo
 | `LOG_LEVEL` | `debug`, `info`, `warn`, or `error` (default: `info`). |
 | `RATE_LIMIT` | [ulule/limiter](https://github.com/ulule/limiter) rate string (e.g. `100-M`); empty, `0`, or `off` disables limiting. |
 | `ADMIN_API_KEY` | Optional. If set, registers `/api/v1/admin/*` with auth (`X-Admin-Key` or `Authorization: Bearer`). Currently exposes `GET /api/v1/admin/status` as a smoke check; add list/stats routes here later. |
+| `CORS_ORIGINS` | Comma-separated allowed browser origins for cross-origin calls (e.g. from [`portifolio_web`](../portifolio_web/) with `VITE_API_BASE_URL`). Empty allows any origin. |
 
 ## Run with Docker Compose
 
