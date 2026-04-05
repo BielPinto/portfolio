@@ -1,0 +1,148 @@
+basePath: /
+definitions:
+  handlers.ErrorResponseBody:
+    properties:
+      details:
+        items:
+          additionalProperties: {}
+          type: object
+        type: array
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  handlers.HealthResponse:
+    properties:
+      database:
+        type: string
+      status:
+        type: string
+      version:
+        type: string
+    type: object
+  models.SubmitContactRequest:
+    properties:
+      email:
+        type: string
+      message:
+        type: string
+      name:
+        type: string
+    required:
+    - email
+    - message
+    - name
+    type: object
+  models.SubmitContactResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: HTTP API for portfolio health checks and contact form submissions.
+  title: Portfolio API
+  version: 0.1.0
+paths:
+  /api/v1/public/contact:
+    post:
+      consumes:
+      - application/json
+      description: Persists a contact form submission (name, email, message).
+      parameters:
+      - description: Payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.SubmitContactRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SubmitContactResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseBody'
+      summary: Submit contact message
+      tags:
+      - contact
+  /api/v1/public/health:
+    get:
+      description: Returns service status and optional database connectivity.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+        "503":
+          description: Database unavailable
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+      summary: Health check
+      tags:
+      - health
+  /contact:
+    post:
+      consumes:
+      - application/json
+      description: Persists a contact form submission (name, email, message).
+      parameters:
+      - description: Payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.SubmitContactRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SubmitContactResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponseBody'
+      summary: Submit contact message
+      tags:
+      - contact
+  /health:
+    get:
+      description: Returns service status and optional database connectivity.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+        "503":
+          description: Database unavailable
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+      summary: Health check
+      tags:
+      - health
+schemes:
+- http
+- https
+swagger: "2.0"
