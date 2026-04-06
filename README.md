@@ -96,7 +96,7 @@ docker compose -f infra/docker/docker-compose.yml up postgres -d
 
 Base manifests live under [`infra/k8s`](infra/k8s). Use them with a local cluster (**kind**, **k3d**, minikube) and [ingress-nginx](https://kubernetes.github.io/ingress-nginx/), or adapt Ingress for **Amazon EKS** and the AWS Load Balancer Controller. Build API and web images from [`apps/api/Dockerfile`](apps/api/Dockerfile) and [`apps/web/Dockerfile`](apps/web/Dockerfile), set `DATABASE_URL` and optional `ADMIN_API_KEY` in a Secret, and apply with `kubectl apply -k infra/k8s` from the repo root.
 
-Full steps, required variables, and an **AWS checklist** (ECR, EKS, RDS, CORS, optional S3 + CloudFront for the SPA) are in [`infra/k8s/README.md`](infra/k8s/README.md). See also [Kubernetes e deploy em cluster](docs/ARCHITECTURE.md#kubernetes-e-deploy-em-cluster) in the architecture doc.
+Full steps, required variables, and an **AWS checklist** (ECR, EKS, RDS, CORS, optional S3 + CloudFront for the SPA) are in [`infra/k8s/README.md`](infra/k8s/README.md). See also [Kubernetes e deploy em cluster](docs/ARCHITECTURE.md#kubernetes-e-deploy-em-cluster) in the architecture doc. A phased **AWS** operations guide (network, RDS, ECR, CI/CD, EKS, secrets) lives in [docs/deployment/AWS.md](docs/deployment/AWS.md).
 
 ## Formatting & commits
 

@@ -187,7 +187,7 @@ Definidas em [`RegisterRoutes`](../apps/api/internal/handlers/routes.go):
 
 ### Kubernetes e deploy em cluster
 
-Manifests declarativos em [`infra/k8s/`](../infra/k8s/) (Kustomize): namespace, API e web (Deployments + Services), ConfigMap, Secret de exemplo, Ingress. Aplicação típica a partir da raiz do repositório: `kubectl apply -k infra/k8s`. Variáveis obrigatórias, build de imagens, notas para Ingress (nginx local vs ALB no EKS) e **checklist AWS (ECR, EKS, RDS)** estão em [`infra/k8s/README.md`](../infra/k8s/README.md).
+Manifests declarativos em [`infra/k8s/`](../infra/k8s/) (Kustomize): namespace, API e web (Deployments + Services), ConfigMap, Secret de exemplo, Ingress. Aplicação típica a partir da raiz do repositório: `kubectl apply -k infra/k8s`. Variáveis obrigatórias, build de imagens, notas para Ingress (nginx local vs ALB no EKS) e **checklist AWS (ECR, EKS, RDS)** estão em [`infra/k8s/README.md`](../infra/k8s/README.md). Roteiro operacional sugerido (fases, pré-requisitos, CI/CD na AWS): [`docs/deployment/AWS.md`](deployment/AWS.md).
 
 ---
 
