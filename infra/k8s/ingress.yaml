@@ -1,0 +1,55 @@
+# Single-host split: API paths vs SPA. Requires an Ingress controller (e.g. ingress-nginx on kind/k3d, or AWS Load Balancer Controller on EKS).
+#
+# EKS / ALB: replace ingressClassName and add annotations, for example:
+#   kubernetes.io/ingress.class: alb
+#   alb.ingress.kubernetes.io/scheme: internet-facing
+#   alb.ingress.kubernetes.io/target-type: ip
+# (See AWS Load Balancer Controller docs for the full set.)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: portfolio
+  namespace: portfolio
+  labels:
+    app.kubernetes.io/name: portfolio
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: portfolio.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-api
+                port:
+                  number: 8080
+          - path: /contact
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-api
+                port:
+                  number: 8080
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-api
+                port:
+                  number: 8080
+          - path: /swagger
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-api
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-web
+                port:
+                  number: 80

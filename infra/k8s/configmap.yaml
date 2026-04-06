@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portfolio-api-config
+  namespace: portfolio
+  labels:
+    app.kubernetes.io/name: portfolio
+    app.kubernetes.io/component: api
+data:
+  LOG_LEVEL: info
+  RATE_LIMIT: 100-M
+  # Comma-separated browser origins when the SPA is on another host. Empty in the API means allow all origins.
+  CORS_ORIGINS: ""
