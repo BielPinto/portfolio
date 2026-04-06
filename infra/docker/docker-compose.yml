@@ -31,5 +31,18 @@ services:
       postgres:
         condition: service_healthy
 
+  # Static SPA (nginx). Build context is the repo root — see apps/web/Dockerfile.
+  # Override VITE_API_BASE_URL via infra/docker/.env or the shell when building.
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
+    ports:
+      - "4173:80"
+    depends_on:
+      - app
+
 volumes:
   pgdata:

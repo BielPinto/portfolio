@@ -8,7 +8,7 @@ React (Vite) frontend and Go API, with shared tooling at the repository root.
 | -------------- | ------------------------------------------------------------------- |
 | `apps/web`     | Frontend (`@portfolio/web`)                                         |
 | `apps/api`     | Backend API (`@portfolio/api`)                                      |
-| `infra/docker` | Docker Compose (Postgres + API)                                     |
+| `infra/docker` | Docker Compose (Postgres + API + web estático)                      |
 | `docs/`        | Documentação transversal (ex.: [arquitetura](docs/ARCHITECTURE.md)) |
 
 History from the former separate frontend and backend repos was merged with `git subtree` into `apps/web` and `apps/api`.
@@ -71,12 +71,24 @@ pnpm test
 
 Go integration tests (`//go:build integration`) are not run by default; use `go test -tags=integration ./...` from `apps/api` when Docker is available.
 
-## Docker (API + Postgres)
+## Docker (Postgres + API + web)
 
 From the **repository root**:
 
 ```bash
 docker compose -f infra/docker/docker-compose.yml up --build
+```
+
+This starts Postgres, the API on [http://localhost:8080](http://localhost:8080), and the static frontend on [http://localhost:4173](http://localhost:4173).
+
+**Build-time variable for the SPA:** the browser calls the API using the URL embedded at `pnpm build` time. Compose passes **`VITE_API_BASE_URL`** (default `http://localhost:8080`, matching the published API port). To change it, set the variable in your environment or copy [`infra/docker/.env.example`](infra/docker/.env.example) to `infra/docker/.env` and edit before `docker compose up --build`. If the front and API are served from the **same host** behind one reverse proxy, you can use an empty value and relative API paths instead.
+
+With **`CORS_ORIGINS` unset**, the API allows any origin, which is enough for local cross-origin checks between `localhost:4173` and `localhost:8080`. For production, set **`CORS_ORIGINS`** on the API to your real site origin(s).
+
+To run **only** Postgres (typical local dev with `pnpm dev`):
+
+```bash
+docker compose -f infra/docker/docker-compose.yml up postgres -d
 ```
 
 ## Formatting & commits

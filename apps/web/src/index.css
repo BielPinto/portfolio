@@ -18,6 +18,18 @@
 @layer base {
   html {
     @apply scroll-smooth antialiased;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  /* Native <select> dropdowns: hint the UA + fallback for option rows in dark mode */
+  html.dark select option,
+  html.dark select optgroup {
+    background-color: var(--color-night);
+    color: #e2e8f0;
   }
 
   body {

@@ -183,7 +183,7 @@ Definidas em [`RegisterRoutes`](../apps/api/internal/handlers/routes.go):
 
 ### Infraestrutura em Docker
 
-[`infra/docker/docker-compose.yml`](../infra/docker/docker-compose.yml): serviço **postgres** (imagem `postgres:16-alpine`) e **app** (build do [`Dockerfile`](../apps/api/Dockerfile) em `apps/api`), com `DATABASE_URL` apontando para o serviço interno.
+[`infra/docker/docker-compose.yml`](../infra/docker/docker-compose.yml): **postgres** (`postgres:16-alpine`), **app** (build do [`Dockerfile`](../apps/api/Dockerfile) em `apps/api`, `DATABASE_URL` para o serviço interno) e **web** (build estático com [`apps/web/Dockerfile`](../apps/web/Dockerfile) a partir da raiz do repo; variável de build **`VITE_API_BASE_URL`** documentada em [`README.md`](../README.md) e [`infra/docker/.env.example`](../infra/docker/.env.example)).
 
 ---
 
