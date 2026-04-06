@@ -4,11 +4,12 @@ React (Vite) frontend and Go API, with shared tooling at the repository root.
 
 ## Layout
 
-| Path | Description |
-|------|-------------|
-| `apps/web` | Frontend (`@portfolio/web`) |
-| `apps/api` | Backend API (`@portfolio/api`) |
-| `infra/docker` | Docker Compose (Postgres + API) |
+| Path           | Description                                                         |
+| -------------- | ------------------------------------------------------------------- |
+| `apps/web`     | Frontend (`@portfolio/web`)                                         |
+| `apps/api`     | Backend API (`@portfolio/api`)                                      |
+| `infra/docker` | Docker Compose (Postgres + API)                                     |
+| `docs/`        | Documentação transversal (ex.: [arquitetura](docs/ARCHITECTURE.md)) |
 
 History from the former separate frontend and backend repos was merged with `git subtree` into `apps/web` and `apps/api`.
 
@@ -83,6 +84,8 @@ docker compose -f infra/docker/docker-compose.yml up --build
 - `pnpm format` — Prettier (web and repo root files; Go is excluded in `.prettierignore`)
 - [Conventional Commits](https://www.conventionalcommits.org/) enforced via commitlint + Husky on `commit-msg`
 
-## Go workspace
+## Go / API module
 
-[`go.work`](go.work) includes `./apps/api` so you can run `go` commands from the repo root when needed.
+The API module lives in [`apps/api`](apps/api). Run `go` commands from that directory (for example `cd apps/api && go test ./...`).
+
+`apps/api/go.mod` sets `toolchain go1.25.8` so a **bootstrap** Go (for example 1.23.x) can use **`GOTOOLCHAIN=auto`** (the default since Go 1.21) to download and run the required toolchain. Dependencies such as Gin 1.12 need Go 1.25+.
