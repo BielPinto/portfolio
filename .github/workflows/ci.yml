@@ -11,16 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Versão do pnpm vem só do campo packageManager no package.json (sem input version aqui).
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          cache: true
+          cache_dependency_path: pnpm-lock.yaml
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec turbo run lint test build --filter=@portfolio/web
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          HUSKY: '0'
+      - name: Lint, test, build (web)
+        run: pnpm exec turbo run lint test build --filter=@portfolio/web
 
   api:
     runs-on: ubuntu-latest
