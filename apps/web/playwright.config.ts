@@ -1,7 +1,7 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
-const localOrigin = 'http://127.0.0.1:5173';
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? localOrigin;
+const localOrigin = 'http://127.0.0.1:5173'
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? localOrigin
 
 export default defineConfig({
   testDir: 'e2e',
@@ -26,9 +26,9 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: 'npm run dev -- --host 127.0.0.1 --port 5173',
+        command: 'pnpm run dev -- --host 127.0.0.1 --port 5173',
         url: localOrigin,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
       },
-});
+})

@@ -2,6 +2,8 @@ module github.com/BielPinto/portfolio/apps/api
 
 go 1.25.0
 
+toolchain go1.25.8
+
 require (
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.12.0

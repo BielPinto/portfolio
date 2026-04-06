@@ -77,6 +77,22 @@ If `ADMIN_API_KEY` is set, verify the admin namespace (expects the same key in t
 curl -sS http://127.0.0.1:8080/api/v1/admin/status -H "X-Admin-Key: $ADMIN_API_KEY"
 ```
 
+## Tests
+
+**Unit tests** (default; no Docker):
+
+```bash
+go test ./... -count=1
+```
+
+**Integration tests** (PostgreSQL via [Testcontainers](https://golang.testcontainers.org/); requires **Docker**):
+
+```bash
+go test -tags=integration ./... -count=1
+```
+
+From the monorepo root, `pnpm test` runs `go test ./...` for this app (via `apps/api/package.json`). CI runs the same command in the `api` job and integration tests in the `api-integration` job.
+
 ## Swagger (OpenAPI)
 
 Interactive docs are served at **`/swagger/index.html`** (e.g. `http://127.0.0.1:8080/swagger/index.html`). The spec is generated from handler comments; after changing annotations, regenerate from `cmd/api` with:
