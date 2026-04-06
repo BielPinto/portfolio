@@ -12,86 +12,86 @@ export type Project = {
 const projectsByLocale: Record<Locale, Project[]> = {
   en: [
     {
-      id: 'cloud-infra',
-      title: 'Nexus Distributed Mesh',
+      id: 'intelbras-iot',
+      title: 'Remote device management at scale',
       excerpt:
-        'Multi-region orchestration layer with automated failover and cost-aware autoscaling for stateful workloads.',
-      tags: ['Go', 'Kubernetes', 'AWS'],
+        'Cloud-native IoT platform for millions of devices: Golang microservices, MQTT, TR-069/TR-369, Redis caching, and async processing — contributing to 30%+ infra and DB cost reduction with zero-downtime operations.',
+      tags: ['Go', 'MQTT', 'Kubernetes'],
       imageSrc:
         'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
       href: '#',
     },
     {
-      id: 'blockchain',
-      title: 'Chronos Indexer',
+      id: 'f4g-health',
+      title: 'Multi-tenant healthcare platform',
       excerpt:
-        'High-throughput indexer and explorer API with deterministic replay and rich aggregation queries.',
-      tags: ['Rust', 'gRPC', 'Postgres'],
+        'Secure, compliant SaaS: Next.js front end, NestJS and Prisma on the backend, tenant isolation, real-time clinical data visualization, and close collaboration with design and DevOps.',
+      tags: ['Next.js', 'NestJS', 'Prisma'],
       imageSrc:
-        'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80',
+        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80',
       href: '#',
     },
     {
-      id: 'data-viz',
-      title: 'Signal Analytics Console',
+      id: 'forbusiness-erp',
+      title: 'ERP integrations & process automation',
       excerpt:
-        'Real-time operational dashboards with drill-down tracing from metrics to exemplar traces.',
-      tags: ['React', 'OTel', 'ClickHouse'],
+        'Enterprise workflows with Fluig (BPMN) and RM Totvs: integrations, dashboards, validations, and automation for mobility, energy, and industrial clients — from intern to engineer in three months.',
+      tags: ['BPMN', 'Fluig', 'Totvs RM'],
       imageSrc:
-        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
+        'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
       href: '#',
     },
     {
-      id: 'security',
-      title: 'Fortress Guard',
+      id: 'portfolio',
+      title: 'This portfolio (open source)',
       excerpt:
-        'Unified security posture UI: policy as code, drift detection, and automated remediation hooks.',
-      tags: ['TypeScript', 'AWS', 'OPA'],
+        'Modern React SPA with i18n, theme switching, and a Go API for contact — the site you are browsing, versioned on GitHub.',
+      tags: ['React', 'Go', 'TypeScript'],
       imageSrc:
-        'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80',
-      href: '#',
+        'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80',
+      href: 'https://github.com/BielPinto/portfolio',
     },
   ],
   pt: [
     {
-      id: 'cloud-infra',
-      title: 'Malha distribuída Nexus',
+      id: 'intelbras-iot',
+      title: 'Gestão remota de dispositivos em escala',
       excerpt:
-        'Camada de orquestração multi-região com failover automático e autoscaling consciente de custo para cargas com estado.',
-      tags: ['Go', 'Kubernetes', 'AWS'],
+        'Plataforma IoT cloud-native para milhões de dispositivos: microsserviços em Golang, MQTT, TR-069/TR-369, cache Redis e processamento assíncrono — contribuindo para redução de mais de 30% em custos de infra e banco, com operações sem downtime.',
+      tags: ['Go', 'MQTT', 'Kubernetes'],
       imageSrc:
         'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
       href: '#',
     },
     {
-      id: 'blockchain',
-      title: 'Indexador Chronos',
+      id: 'f4g-health',
+      title: 'Plataforma multi-tenant de saúde',
       excerpt:
-        'Indexador e API de explorer em alto throughput com replay determinístico e consultas de agregação ricas.',
-      tags: ['Rust', 'gRPC', 'Postgres'],
+        'SaaS seguro e em conformidade: Next.js no front, NestJS e Prisma no backend, isolamento por tenant, visualização clínica em tempo real e trabalho conjunto com design e DevOps.',
+      tags: ['Next.js', 'NestJS', 'Prisma'],
       imageSrc:
-        'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80',
+        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80',
       href: '#',
     },
     {
-      id: 'data-viz',
-      title: 'Console Signal Analytics',
+      id: 'forbusiness-erp',
+      title: 'Integrações ERP e automação de processos',
       excerpt:
-        'Painéis operacionais em tempo real com rastreamento drill-down de métricas até traces exemplares.',
-      tags: ['React', 'OTel', 'ClickHouse'],
+        'Fluxos corporativos com Fluig (BPMN) e RM Totvs: integrações, painéis, validações e automação para clientes de mobilidade, energia e indústria — de estagiário a engenheiro em três meses.',
+      tags: ['BPMN', 'Fluig', 'Totvs RM'],
       imageSrc:
-        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
+        'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
       href: '#',
     },
     {
-      id: 'security',
-      title: 'Fortress Guard',
+      id: 'portfolio',
+      title: 'Este portfólio (open source)',
       excerpt:
-        'UI unificada de postura de segurança: policy as code, detecção de drift e ganchos de remediação automática.',
-      tags: ['TypeScript', 'AWS', 'OPA'],
+        'SPA em React com i18n, troca de tema e API em Go para contato — o site que você está vendo, versionado no GitHub.',
+      tags: ['React', 'Go', 'TypeScript'],
       imageSrc:
-        'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80',
-      href: '#',
+        'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80',
+      href: 'https://github.com/BielPinto/portfolio',
     },
   ],
 }

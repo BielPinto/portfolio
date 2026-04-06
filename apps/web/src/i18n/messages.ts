@@ -2,7 +2,7 @@ import type { Locale } from '@/i18n/locale'
 
 const en = {
   meta: {
-    documentTitle: 'Gabriel Rocha — Portfolio',
+    documentTitle: 'Gabriel Pinto — Portfolio',
   },
   nav: {
     home: 'Home',
@@ -31,43 +31,43 @@ const en = {
     aboutLink: 'About',
     andThe: 'and',
     theBlog: 'the blog',
-    codeComment: '// Initializing high-scale systems...',
-    chipAws: 'AWS INFRA',
-    chipDistributed: 'DISTRIBUTED',
+    codeComment: '// Pipelines tuned for millions of devices...',
+    chipAws: 'AWS & CLOUD',
+    chipDistributed: 'IOT & EVENT-DRIVEN',
   },
   philosophy: {
     title: 'Core Philosophy',
   },
   site: {
     title: 'Senior Software Engineer',
-    name: 'Gabriel Rocha',
+    name: 'Gabriel Pinto',
     tagline:
-      'Architecting resilient digital infrastructure with Golang, React, and AWS. Focused on building highly scalable Distributed Systems that power high-performance applications.',
+      'Golang-focused backend engineer building cloud-native microservices and high-performance APIs for IoT and real-time platforms. React on the front, AWS and hybrid cloud in production — with MQTT, Kafka, and resilient distributed design.',
     philosophy:
-      'I believe in code as architecture. Every line should contribute to a structural integrity that withstands the chaos of scale. My approach combines the rigorous logic of Backend engineering with the empathetic precision of modern UI.',
+      'I focus on scalability, resilience, clean architecture, and maintainability — systems that behave under real production load. I combine rigorous backend engineering with clear interfaces, and I have led stand-ups, sprint planning, and cross-team alignment alongside hands-on delivery.',
     philosophyTags: [
-      'Concurrency',
-      'Type-Safety',
+      'Scalability',
+      'Clean Architecture',
+      'Event-driven',
       'Observability',
-      'Performance',
     ],
-    yearsExperience: '10+',
-    yearsLabel: 'Years of Craftsmanship',
+    yearsExperience: '7+',
+    yearsLabel: 'Years of experience',
     contactIntro:
-      'Currently open to senior leadership roles and specialized architectural consulting. Reach out for a technical deep-dive.',
+      'Open to senior engineering roles, architecture discussions, and selective consulting. Reach out if you want to talk APIs, IoT platforms, or cloud-native delivery.',
     responseTimeNote: 'Average response time: 24-48 business hours.',
-    copyright: '© 2026 Senior Software Engineer. Built with Precision.',
-    portraitAlt: 'Professional portrait of Gabriel Rocha, software engineer',
+    copyright: '© 2026 Gabriel Pinto. Built with precision.',
+    portraitAlt: 'Professional portrait of Gabriel Pinto, software engineer',
     aboutBio: [
-      'I design and build systems where reliability and clarity matter as much as raw throughput. My work spans backend services, cloud infrastructure, and interfaces that make complexity approachable.',
-      'I care about measurable outcomes: latency budgets, cost-aware architectures, and teams that can own what they ship. If that resonates, I would like to hear what you are building.',
+      'I am a Senior Software Engineer with 7+ years building cloud-native platforms and distributed systems, with Golang as my primary backend language. I design REST and gRPC APIs and scalable microservices for large-scale IoT ecosystems and real-time device management — including event-driven stacks with Kafka and MQTT, and React applications deployed on AWS and Huawei Cloud.',
+      'At Intelbras I work on remote device management for millions of connected devices, with high availability and zero downtime; I have also contributed to cost reductions of over 30% through Redis, async processing, and query optimization. I lead day-to-day technical coordination when needed and specialize in protocols such as MQTT, TR-069, and TR-369, plus modernization of legacy components into modular microservices.',
     ],
     aboutHistory:
-      'Over a decade shipping production software across startups and scale-ups — from greenfield APIs to migrations and hardening of legacy paths.',
+      'Intelbras (2022–present): Senior Software Engineer on cloud IoT — Golang, Node.js, firmware collaboration, and technical leadership. F4G (2023–2024): multi-tenant healthcare — Next.js, NestJS, Prisma. For Business (2019–2022): ERP integrations with Fluig and RM Totvs, promoted from intern to engineer in three months. Earlier: support and DevOps roles that grounded me in networks, CI/CD, and production discipline.',
     aboutTools:
-      'Go, TypeScript, React, AWS, Kubernetes, PostgreSQL, observability stacks.',
+      'Go, Node.js, TypeScript, React, Next.js, NestJS, Prisma, Flutter (integration), Docker, Kubernetes, AWS, Redis, PostgreSQL, Kafka, MQTT, Jenkins, Git.',
     aboutSkills:
-      'Distributed systems, API design, event-driven workflows, performance tuning, and pragmatic security.',
+      'REST and gRPC API design, cloud-native and event-driven architecture, IoT (MQTT, TR-069, TR-369), distributed systems, performance and cost optimization, BPMN / Fluig / RM Totvs, technical leadership in agile teams.',
     ctaAbout: "Let's build something scalable",
     locationLabel: 'Base',
   },
@@ -87,9 +87,9 @@ const en = {
   },
   projectsHero: {
     eyebrow: 'SENIOR SOFTWARE ENGINEER',
-    headline: 'Engineering scalable systems with mathematical precision.',
+    headline: 'Cloud-native platforms from IoT scale to regulated SaaS.',
     body:
-      'A selection of systems work spanning infrastructure, data planes, and the interfaces that make them operable.',
+      'Highlights from Intelbras device management, F4G healthcare, enterprise automation with Fluig/Totvs, and this open-source portfolio.',
   },
   blogPage: {
     recentPosts: 'Recent posts',
@@ -140,7 +140,7 @@ export type Messages = typeof en
 
 const pt: Messages = {
   meta: {
-    documentTitle: 'Gabriel Rocha — Portfólio',
+    documentTitle: 'Gabriel Pinto — Portfólio',
   },
   nav: {
     home: 'Início',
@@ -169,43 +169,43 @@ const pt: Messages = {
     aboutLink: 'Sobre',
     andThe: 'e no',
     theBlog: 'blog',
-    codeComment: '// Inicializando sistemas em larga escala...',
-    chipAws: 'INFRA AWS',
-    chipDistributed: 'DISTRIBUÍDO',
+    codeComment: '// Pipelines afinados para milhões de dispositivos...',
+    chipAws: 'AWS & NUVEM',
+    chipDistributed: 'IOT & EVENT-DRIVEN',
   },
   philosophy: {
     title: 'Filosofia central',
   },
   site: {
     title: 'Engenheiro de Software Sênior',
-    name: 'Gabriel Rocha',
+    name: 'Gabriel Pinto',
     tagline:
-      'Arquitetando infraestrutura digital resiliente com Golang, React e AWS. Focado em sistemas distribuídos altamente escaláveis que sustentam aplicações de alto desempenho.',
+      'Backend com foco em Golang: microsserviços cloud-native e APIs de alta performance para IoT e plataformas em tempo real. React no front, AWS e nuvem híbrida em produção — com MQTT, Kafka e design distribuído resiliente.',
     philosophy:
-      'Acredito que código é arquitetura. Cada linha deve contribuir para uma integridade estrutural que aguente o caos da escala. Minha abordagem combina a lógica rigorosa do backend com a precisão empática de interfaces modernas.',
+      'Priorizo escalabilidade, resiliência, clean architecture e manutenibilidade — sistemas que se comportam bem sob carga real. Uno engenharia de backend rigorosa a interfaces claras; também conduzo dailies, planejamento de sprint e alinhamento entre times além da execução técnica.',
     philosophyTags: [
-      'Concorrência',
-      'Type-safety',
+      'Escalabilidade',
+      'Clean Architecture',
+      'Event-driven',
       'Observabilidade',
-      'Performance',
     ],
-    yearsExperience: '10+',
-    yearsLabel: 'Anos de ofício',
+    yearsExperience: '7+',
+    yearsLabel: 'Anos de experiência',
     contactIntro:
-      'Aberto a posições de liderança sênior e consultoria arquitetural especializada. Entre em contato para uma conversa técnica.',
+      'Aberto a posições sênior, conversas de arquitetura e consultoria pontual. Fale comigo sobre APIs, plataformas IoT ou entrega cloud-native.',
     responseTimeNote: 'Tempo médio de resposta: 24 a 48 horas úteis.',
-    copyright: '© 2026 Engenheiro de Software Sênior. Feito com precisão.',
-    portraitAlt: 'Retrato profissional de Gabriel Rocha, engenheiro de software',
+    copyright: '© 2026 Gabriel Pinto. Feito com precisão.',
+    portraitAlt: 'Retrato profissional de Gabriel Pinto, engenheiro de software',
     aboutBio: [
-      'Projeto e construo sistemas em que confiabilidade e clareza importam tanto quanto vazão bruta. Meu trabalho vai de serviços de backend e infraestrutura em nuvem a interfaces que tornam a complexidade compreensível.',
-      'Me importo com resultados mensuráveis: orçamentos de latência, arquiteturas conscientes de custo e times que donam o que entregam. Se isso ressoa, quero ouvir o que você está construindo.',
+      'Sou Engenheiro de Software Sênior com mais de 7 anos construindo plataformas cloud-native e sistemas distribuídos, com Golang como linguagem principal no backend. Projeto APIs REST e gRPC e microsserviços escaláveis para ecossistemas IoT em larga escala e gestão remota de dispositivos — incluindo arquitetura orientada a eventos com Kafka e MQTT, e frontends em React em ambientes AWS e Huawei Cloud.',
+      'Na Intelbras atuo em gestão remota de dispositivos para milhões de conexões, com alta disponibilidade e zero downtime; também contribuí para redução de mais de 30% em custos de infra e banco com Redis, processamento assíncrono e otimização de consultas. Assumo coordenação técnica do dia a dia quando necessário e especializo-me em protocolos como MQTT, TR-069 e TR-369, além de modernização de legado em microsserviços modulares.',
     ],
     aboutHistory:
-      'Mais de uma década entregando software em produção em startups e empresas em escala — de APIs greenfield a migrações e endurecimento de legado.',
+      'Intelbras (2022–presente): Engenheiro de Software Sênior em IoT na nuvem — Golang, Node.js, colaboração com firmware e liderança técnica. F4G (2023–2024): saúde multi-tenant — Next.js, NestJS, Prisma. For Business (2019–2022): integrações ERP com Fluig e RM Totvs, promovido de estagiário a engenheiro em três meses. Anteriormente: suporte e DevOps — redes, CI/CD e disciplina de produção.',
     aboutTools:
-      'Go, TypeScript, React, AWS, Kubernetes, PostgreSQL, stacks de observabilidade.',
+      'Go, Node.js, TypeScript, React, Next.js, NestJS, Prisma, Flutter (integração), Docker, Kubernetes, AWS, Redis, PostgreSQL, Kafka, MQTT, Jenkins, Git.',
     aboutSkills:
-      'Sistemas distribuídos, design de APIs, fluxos orientados a eventos, tuning de performance e segurança pragmática.',
+      'Design de APIs REST e gRPC, arquitetura cloud-native e orientada a eventos, IoT (MQTT, TR-069, TR-369), sistemas distribuídos, otimização de performance e custo, BPMN / Fluig / RM Totvs, liderança técnica em times ágeis.',
     ctaAbout: 'Vamos construir algo escalável',
     locationLabel: 'Base',
   },
@@ -225,9 +225,9 @@ const pt: Messages = {
   },
   projectsHero: {
     eyebrow: 'ENGENHEIRO DE SOFTWARE SÊNIOR',
-    headline: 'Engenharia de sistemas escaláveis com precisão matemática.',
+    headline: 'Plataformas cloud-native da escala IoT a SaaS regulado.',
     body:
-      'Uma seleção de trabalhos em sistemas — infraestrutura, planos de dados e as interfaces que os tornam operáveis.',
+      'Destaques na Intelbras (gestão de dispositivos), F4G (saúde), automação enterprise com Fluig/Totvs e este portfólio open source.',
   },
   blogPage: {
     recentPosts: 'Posts recentes',

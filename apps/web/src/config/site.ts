@@ -1,11 +1,11 @@
 export const siteConfig = {
-  brand: 'Gabriel Rocha',
-  logoInitials: 'GR',
+  brand: 'Gabriel Pinto',
+  logoInitials: 'GP',
   email: 'gabr13lp.roch@gmail.com',
-  location: 'Recife, PE',
+  location: 'Recife, Pernambuco, Brazil',
   social: {
     github: 'https://github.com/BielPinto',
-    linkedin: 'https://www.linkedin.com/in/gabriel-rocha-souza/',
-    sourceCode: 'https://github.com',
+    linkedin: 'https://www.linkedin.com/in/gabriel-rochasouza/',
+    sourceCode: 'https://github.com/BielPinto/portfolio',
   },
 } as const

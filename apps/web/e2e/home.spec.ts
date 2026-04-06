@@ -10,7 +10,7 @@ test('home loads and navigates to projects', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: /Gabriel Rocha/,
+      name: /Gabriel Pinto/,
     }),
   ).toBeVisible();
 
@@ -23,7 +23,7 @@ test('home loads and navigates to projects', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'Engineering scalable systems with mathematical precision.',
+      name: 'Cloud-native platforms from IoT scale to regulated SaaS.',
     }),
   ).toBeVisible();
 });

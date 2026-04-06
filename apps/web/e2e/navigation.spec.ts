@@ -16,12 +16,12 @@ test.describe('routes and navigation', () => {
 
   test('each main route shows expected primary heading', async ({ page }) => {
     const cases: Array<{ path: string; name: string | RegExp }> = [
-      { path: '/', name: 'Gabriel Rocha' },
+      { path: '/', name: 'Gabriel Pinto' },
       {
         path: '/projects',
-        name: 'Engineering scalable systems with mathematical precision.',
+        name: 'Cloud-native platforms from IoT scale to regulated SaaS.',
       },
-      { path: '/about', name: 'Gabriel Rocha' },
+      { path: '/about', name: 'Gabriel Pinto' },
       {
         path: '/blog',
         name: 'Ideas on systems, tooling, and craft.',
