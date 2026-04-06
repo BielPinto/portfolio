@@ -9,6 +9,7 @@ React (Vite) frontend and Go API, with shared tooling at the repository root.
 | `apps/web`     | Frontend (`@portfolio/web`)                                         |
 | `apps/api`     | Backend API (`@portfolio/api`)                                      |
 | `infra/docker` | Docker Compose (Postgres + API + web estático)                      |
+| `infra/k8s`    | Kubernetes (Kustomize): API + web + Ingress — [README](infra/k8s/README.md) |
 | `docs/`        | Documentação transversal (ex.: [arquitetura](docs/ARCHITECTURE.md)) |
 
 History from the former separate frontend and backend repos was merged with `git subtree` into `apps/web` and `apps/api`.
@@ -90,6 +91,12 @@ To run **only** Postgres (typical local dev with `pnpm dev`):
 ```bash
 docker compose -f infra/docker/docker-compose.yml up postgres -d
 ```
+
+## Kubernetes (local or cloud)
+
+Base manifests live under [`infra/k8s`](infra/k8s). Use them with a local cluster (**kind**, **k3d**, minikube) and [ingress-nginx](https://kubernetes.github.io/ingress-nginx/), or adapt Ingress for **Amazon EKS** and the AWS Load Balancer Controller. Build API and web images from [`apps/api/Dockerfile`](apps/api/Dockerfile) and [`apps/web/Dockerfile`](apps/web/Dockerfile), set `DATABASE_URL` and optional `ADMIN_API_KEY` in a Secret, and apply with `kubectl apply -k infra/k8s` from the repo root.
+
+Full steps, required variables, and an **AWS checklist** (ECR, EKS, RDS, CORS, optional S3 + CloudFront for the SPA) are in [`infra/k8s/README.md`](infra/k8s/README.md). See also [Kubernetes e deploy em cluster](docs/ARCHITECTURE.md#kubernetes-e-deploy-em-cluster) in the architecture doc.
 
 ## Formatting & commits
 

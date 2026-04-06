@@ -185,6 +185,10 @@ Definidas em [`RegisterRoutes`](../apps/api/internal/handlers/routes.go):
 
 [`infra/docker/docker-compose.yml`](../infra/docker/docker-compose.yml): **postgres** (`postgres:16-alpine`), **app** (build do [`Dockerfile`](../apps/api/Dockerfile) em `apps/api`, `DATABASE_URL` para o serviço interno) e **web** (build estático com [`apps/web/Dockerfile`](../apps/web/Dockerfile) a partir da raiz do repo; variável de build **`VITE_API_BASE_URL`** documentada em [`README.md`](../README.md) e [`infra/docker/.env.example`](../infra/docker/.env.example)).
 
+### Kubernetes e deploy em cluster
+
+Manifests declarativos em [`infra/k8s/`](../infra/k8s/) (Kustomize): namespace, API e web (Deployments + Services), ConfigMap, Secret de exemplo, Ingress. Aplicação típica a partir da raiz do repositório: `kubectl apply -k infra/k8s`. Variáveis obrigatórias, build de imagens, notas para Ingress (nginx local vs ALB no EKS) e **checklist AWS (ECR, EKS, RDS)** estão em [`infra/k8s/README.md`](../infra/k8s/README.md).
+
 ---
 
 ## Fluxo resumido: envio de contato
@@ -213,3 +217,4 @@ sequenceDiagram
 - API (requisitos, variáveis, Postgres): [`apps/api/README.md`](../apps/api/README.md) e [`apps/api/docs/`](../apps/api/docs/)
 - Testes E2E e Vitest: [`apps/web/docs/E2E.md`](../apps/web/docs/E2E.md)
 - Raiz do monorepo (comandos, pré-requisitos): [`README.md`](../README.md)
+- Kubernetes: [`infra/k8s/README.md`](../infra/k8s/README.md)
