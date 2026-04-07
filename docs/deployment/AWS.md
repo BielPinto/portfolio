@@ -1,22 +1,27 @@
-# Roteiro de deploy na AWS
+# Roteiro de deploy na AWS (Docker-first)
 
-Este documento é o **roteiro operacional** sugerido para levar o portfolio (API Go + SPA Vite) para a AWS. Os manifests Kubernetes continuam a ser a referência técnica em [`infra/k8s/README.md`](../../infra/k8s/README.md); aqui descreve-se ordem prática, decisões e pré-requisitos de conta e rede.
+Este documento descreve o plano recomendado para levar o portfolio (API Go + SPA Vite) para a AWS com foco em baixo custo e baixa complexidade operacional:
 
-**Fora de escopo deste ficheiro:** provisionar automaticamente uma conta AWS nem substituir IaC concreto (CDK, Terraform, etc.). Pode listar-se IaC como próximo passo opcional após validar o fluxo manualmente.
+1. Docker local (estado atual)
+2. Docker em cloud (sem Kubernetes)
+3. Kubernetes apenas se houver gatilhos reais de escala e organizacao
 
-## Ligações úteis no repositório
+Os manifests Kubernetes em [`infra/k8s/README.md`](../../infra/k8s/README.md) continuam validos como trilha futura, nao como passo obrigatorio inicial.
 
-| Documento | Conteúdo |
+Fora de escopo deste ficheiro: provisionar automaticamente conta AWS nem substituir IaC concreto (CDK, Terraform, CloudFormation). A recomendacao e validar primeiro o fluxo operacional simples e depois formalizar em IaC.
+
+## Ligacoes uteis no repositorio
+
+| Documento | Conteudo |
 | --------- | -------- |
-| [`infra/k8s/README.md`](../../infra/k8s/README.md) | Kustomize, variáveis, Ingress, checklist ECR/EKS/RDS |
-| [`README.md`](../../README.md) | Monorepo, Docker Compose, `VITE_API_BASE_URL`, Kubernetes em alto nível |
-| [`apps/api/README.md`](../../apps/api/README.md) | Variáveis de ambiente da API (`DATABASE_URL`, `CORS_ORIGINS`, `ADMIN_API_KEY`, …) |
+| [`README.md`](../../README.md) | Monorepo, Docker Compose, `VITE_API_BASE_URL`, Kubernetes em alto nivel |
+| [`infra/docker/docker-compose.yml`](../../infra/docker/docker-compose.yml) | Stack local (postgres, API, web estatico) |
+| [`apps/api/README.md`](../../apps/api/README.md) | Variaveis da API (`DATABASE_URL`, `CORS_ORIGINS`, `ADMIN_API_KEY`) |
+| [`infra/k8s/README.md`](../../infra/k8s/README.md) | Referencia para evolucao futura em Kubernetes |
 
-Imagens: [`apps/api/Dockerfile`](../../apps/api/Dockerfile) e [`apps/web/Dockerfile`](../../apps/web/Dockerfile) (contexto do build web = **raiz do monorepo**). O URL da API visível no browser é embutido no bundle com **`VITE_API_BASE_URL`** no build da imagem web.
+Imagens: [`apps/api/Dockerfile`](../../apps/api/Dockerfile) e [`apps/web/Dockerfile`](../../apps/web/Dockerfile). O URL da API visivel no browser e embutido no bundle com `VITE_API_BASE_URL` no build da imagem web.
 
-O Ingress base está em [`infra/k8s/ingress.yaml`](../../infra/k8s/ingress.yaml) (`ingressClassName: nginx` por defeito; comentários para ALB no EKS).
-
-## Diagrama de referência (fluxo)
+## Diagrama de referencia (Docker em cloud)
 
 ```mermaid
 flowchart LR
@@ -24,101 +29,149 @@ flowchart LR
     browser[Browser]
   end
   subgraph edge [Edge]
-    alb[ALB_ACM]
+    cf[CloudFront + ACM]
   end
-  subgraph eks [EKS]
-    webPod[web_nginx]
-    apiPod[api_Go]
+  subgraph runtime [Runtime sem Kubernetes]
+    s3[S3 static site]
+    api[API container ECS Fargate ou App Runner]
   end
-  subgraph data [Data_and_registry]
-    rds[(RDS_Postgres)]
-    ecr[ECR_images]
-    sm[Secrets_Manager]
+  subgraph data [Data and registry]
+    rds[(RDS Postgres)]
+    ecr[ECR images]
+    sm[Secrets Manager]
   end
   subgraph ci [CI]
-    gha[GitHub_Actions]
+    gha[GitHub Actions]
   end
-  browser --> alb
-  alb --> webPod
-  alb --> apiPod
-  apiPod --> rds
-  apiPod --> sm
-  webPod -.->|"static_assets"| browser
+
+  browser --> cf
+  cf --> s3
+  browser --> api
+  api --> rds
+  api --> sm
   gha --> ecr
-  eks --> ecr
+  api --> ecr
 ```
 
-## Pré-requisitos
+## Pre-requisitos
 
-- **Conta AWS** com permissões para VPC, EKS, ECR, RDS, IAM, (opcional) Route 53, ACM, Secrets Manager.
-- **Região** escolhida de forma consistente (todos os recursos relacionados na mesma região, salvo requisitos específicos).
-- **Domínio** (opcional mas recomendado) para TLS no ALB ou CloudFront e para URLs estáveis da API e do front.
-- **Ferramentas:** AWS CLI (`aws`), `kubectl` configurado contra o cluster alvo, Docker para builds locais de validação.
-- **Decisão inicial — onde servir o SPA:**
-  - **Variante A — SPA no EKS (nginx):** alinhado aos manifests actuais (`portfolio-web` em Pod). Simples de alinhar com o que já existe; custo e gestão de Pods para ficheiros estáticos.
-  - **Variante B — S3 + CloudFront:** servir o `dist/` do Vite a partir de S3 atrás de CloudFront; só a API no EKS. Costuma reduzir custo e simplificar escala de estáticos; continua a ser necessário `VITE_API_BASE_URL` apontando para a API pública e `CORS_ORIGINS` na API a coincidir com o domínio CloudFront (ou custom). Esta variante já é mencionada em [`infra/k8s/README.md`](../../infra/k8s/README.md).
+- Conta AWS com permissoes para VPC, ECR, RDS, IAM, ECS/App Runner, Route 53 (opcional), ACM, CloudFront, S3 e Secrets Manager.
+- Regiao escolhida de forma consistente.
+- Dominio (opcional, recomendado) para TLS e URLs estaveis.
+- Ferramentas: AWS CLI (`aws`), Docker.
+- Decisao inicial de runtime da API (sem k8s):
+  - Variante A: ECS Fargate (mais controle)
+  - Variante B: App Runner (mais simples para iniciar)
 
-O workflow de CI actual ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)) faz lint, test e build; **não** inclui `docker build` nem push para registo — isso entra na fase CI/CD abaixo.
+O workflow atual [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) faz lint, test e build; ainda nao publica imagens nem faz deploy.
 
----
+## Estrategia para manter custo baixo
 
-## Fases sugeridas (ordem prática)
+Para este projeto, o maior impacto de custo tende a vir de runtime de containers, RDS, NAT Gateway e egress de CDN/rede.
 
-### 1. Rede e base (VPC)
+Se o objetivo for poupar sem perder qualidade minima de producao:
 
-- Criar ou reutilizar **VPC** com subnets **públicas** (ALB, NAT se necessário) e **privadas** (nós EKS, RDS).
-- Escolher **AZs** (por exemplo duas ou três) e **alinhar subnets** que vão receber o cluster EKS e a instância RDS (RDS tipicamente só em subnets privadas).
-- Planear security groups: regra de entrada na base de dados **apenas** a partir do cluster EKS (security group dos nós ou do cluster), nunca `0.0.0.0/0` na porta PostgreSQL.
+1. Preferir SPA em S3 + CloudFront (sem container para estaticos).
+2. Evitar NAT Gateway no inicio quando viavel, planeando rede e saida com cuidado.
+3. Comecar pequeno no RDS (single-AZ, classe burstable, backups curtos).
+4. Manter a API com 1 instancia no inicio e escalar por metrica real.
+5. Aplicar retencao curta de logs (7-14 dias no inicio).
 
-### 2. RDS PostgreSQL
+### Guardrails de custo
 
-- Versão de motor alinhada ao ambiente local (Compose usa PostgreSQL **16** — ver [`README.md`](../../README.md) e Compose em `infra/docker`).
-- Colocar o RDS em **subnets privadas**; **security group** com inbound só desde o EKS.
-- `DATABASE_URL` com **`sslmode`** adequado ao RDS (por exemplo `require` ou o modo que a política de segurança exigir).
-- **Não** commitar credenciais: guardar a connection string no **Secrets Manager** (ou SSM) e injetar no cluster com **External Secrets Operator** (recomendado) ou fluxo manual inicial (`kubectl create secret` a partir de um pipeline seguro).
-- Referência de variáveis da API: [`apps/api/README.md`](../../apps/api/README.md).
+- Criar AWS Budgets com alertas em 50/80/100%.
+- Aplicar tags obrigatorias (`project=portfolio`, `env`, `owner`).
+- Revisao semanal no Cost Explorer.
 
-### 3. ECR
+## Fases sugeridas (ordem pratica)
 
-- Criar repositórios, por exemplo **`portfolio-api`** e **`portfolio-web`**, na região alvo.
-- **IAM com privilégio mínimo** para CI (push) e para nós EKS (pull).
-- Preferir **tags imutáveis** (por exemplo SHA do commit) e referenciar a mesma tag nos Deployments ou via Kustomize `images:` (ver [`infra/k8s/README.md`](../../infra/k8s/README.md)).
+### Fase 0. Base atual (Docker local)
 
-### 4. CI/CD (GitHub Actions + OIDC)
+- Continuar com `docker compose` para desenvolvimento e validacao local.
+- Garantir `VITE_API_BASE_URL` correto por ambiente.
+- Manter paridade minima de versao do Postgres local com producao (16.x).
 
-- Estender o CI com um job em **`main`** (ou workflow dedicado `release`) que use **OIDC para AWS** (sem credenciais longas em secrets estáticos, quando possível).
-- Passos típicos: login no ECR, `docker build` e `docker push` das duas imagens.
-- No build da imagem web, passar **`VITE_API_BASE_URL`** como **build-arg** a partir de **secret** ou **variável de repositório** do GitHub, com o URL **final** que o browser usará para chamar a API (por exemplo `https://api.example.com`).
-- Após o push, actualizar o cluster (`kubectl set image`, GitOps, etc.) conforme [`infra/k8s/README.md`](../../infra/k8s/README.md).
+### Fase 1. Rede e base (VPC)
 
-### 5. EKS
+- Criar/reutilizar VPC com subnets publicas e privadas conforme runtime escolhido.
+- Planejar security groups com acesso ao banco apenas a partir da API.
+- Nunca expor PostgreSQL para `0.0.0.0/0`.
 
-- Criar cluster **EKS** com **node groups** ou **Fargate**, na mesma VPC/subnet strategy do RDS.
-- Instalar add-ons necessários (CNI, etc.) segundo a documentação AWS/EKS.
-- Instalar o **AWS Load Balancer Controller** para expor serviços com **ALB Ingress**.
-- Ajustar o **Ingress**: em [`infra/k8s/ingress.yaml`](../../infra/k8s/ingress.yaml) está `ingressClassName: nginx` e comentários para annotations ALB; em produção AWS, usar overlay Kustomize ou patches com **IngressClass** do ALB e annotations (`scheme`, `target-type`, certificado ACM, …). Garantir que worker nodes (ou Fargate) **puxam imagens do ECR** e **alcançam o RDS** na porta da base de dados.
+### Fase 2. RDS PostgreSQL
 
-### 6. DNS e TLS
+- Provisionar RDS em subnets privadas.
+- Usar `sslmode` adequado na `DATABASE_URL`.
+- Armazenar segredos no Secrets Manager (nunca em git).
+- Iniciar com single-AZ e tamanho conservador.
 
-- **Route 53** (ou DNS externo) com registos apontando para o **ALB** (ou para CloudFront na variante estática do front).
-- Certificado **ACM** associado ao listener HTTPS do ALB (ou ao CloudFront).
+### Fase 3. ECR
 
-### 7. ConfigMap, Secrets, CORS e réplicas da API
+- Criar repositorios `portfolio-api` e `portfolio-web`.
+- Publicar imagens com tags imutaveis (SHA/semver).
+- Restringir IAM por privilegio minimo.
+- Definir lifecycle policy para limpeza de imagens antigas.
 
-- **ConfigMap** (`CORS_ORIGINS`): definir a **origem exacta** do front no browser (URL pública do SPA), não wildcards genéricos em produção. Ver [`infra/k8s/configmap.yaml`](../../infra/k8s/configmap.yaml) e [`apps/api/README.md`](../../apps/api/README.md).
-- **Secret:** `DATABASE_URL` e opcionalmente **`ADMIN_API_KEY`** — valores reais apenas via Secret/Secrets Manager, não em git ([`infra/k8s/secret.yaml`](../../infra/k8s/secret.yaml) usa placeholders).
-- A API corre **migrações ao arranque**; manter **réplica única** da API até existir estratégia explícita para migrações com múltiplas réplicas (Job de migração, leader election, etc.), como já está notado no README do K8s.
+### Fase 4. CI/CD (GitHub Actions + OIDC)
 
-### 8. Pós-deploy
+- Adicionar job de release para:
+  - login no ECR
+  - build/push da API e web
+  - build da web com `VITE_API_BASE_URL` final (browser-visible URL)
+- Atualizar deploy da API no ECS/App Runner com tag imutavel.
+- Automatizar upload do `dist/` no S3 e invalidacao do CloudFront.
 
-- **Smoke tests:** `GET /health`, envio do formulário de contacto (fluxo real browser → API).
-- Rever **custos** (EKS, RDS, tráfego, NAT).
-- **Logs:** agregação para CloudWatch (ou stack de observabilidade escolhida).
-- **Backups RDS** e política de retenção/restauro.
+### Fase 5. Runtime da API (sem Kubernetes)
 
----
+Escolher um caminho:
 
-## Próximos passos opcionais
+- ECS Fargate: Task Definition + Service + autoscaling basico.
+- App Runner: deploy direto da imagem do ECR.
 
-- Formalizar toda a infraestrutura em **Terraform**, **CDK** ou **CloudFormation** para repetibilidade e revisão por PRs.
-- Na variante **S3 + CloudFront**, automatizar upload do `dist/` e invalidação de cache no pipeline, mantendo a API no EKS com os mesmos cuidados de segredo e CORS.
+Boas praticas:
+
+- healthcheck em `/health`
+- segredos via Secrets Manager
+- minimo de capacidade no inicio
+- escala baseada em CPU/memoria e erro/latencia
+
+### Fase 6. DNS e TLS
+
+- Route 53 (ou DNS externo) para CloudFront (front) e endpoint da API.
+- Certificados ACM para front e API.
+
+### Fase 7. Configuracao de app e CORS
+
+- Definir `CORS_ORIGINS` com origem exata do front.
+- Manter `DATABASE_URL` e `ADMIN_API_KEY` em segredo gerenciado.
+- Como a API roda migracoes no startup, manter operacao conservadora no inicio.
+
+### Fase 8. Pos-deploy
+
+- Smoke tests: `GET /health` e envio do formulario de contato.
+- Revisao de custos e ajuste de capacidade.
+- Logs e alarmes basicos no CloudWatch.
+- Validar backups e restore do RDS.
+
+## Checklist rapido de menor custo (producao inicial)
+
+- Frontend em S3 + CloudFront.
+- API em ECS Fargate ou App Runner (sem EKS no inicio).
+- RDS PostgreSQL single-AZ com sizing conservador.
+- API com 1 instancia inicial e escala por medicao.
+- Lifecycle no ECR e retencao enxuta no CloudWatch Logs.
+- Budgets e alertas ativos desde o primeiro dia.
+
+## Gatilhos para migrar para Kubernetes depois
+
+Considere mover para EKS quando houver pelo menos 2 sinais:
+
+- multiplos servicos e necessidade forte de padronizacao de plataforma
+- requisitos avancados de rollout (canary/blue-green) e alta disponibilidade
+- autoscaling horizontal frequente com operacao multiambiente mais complexa
+- equipe com maturidade para operar cluster e observabilidade de producao
+
+## Proximos passos opcionais
+
+- Formalizar toda a infraestrutura em Terraform, CDK ou CloudFormation.
+- Criar ambiente de staging completo no mesmo modelo Docker em cloud.
+- Revisar trimestralmente custo x complexidade para decidir se k8s ainda e necessario.
