@@ -737,6 +737,7 @@ cat > tmp-cloudfront-config.json <<EOF
   "DefaultCacheBehavior": {
     "TargetOriginId": "s3-origin",
     "ViewerProtocolPolicy": "redirect-to-https",
+    "TrustedSigners": { "Enabled": false, "Quantity": 0 },
     "AllowedMethods": { "Quantity": 2, "Items": ["GET","HEAD"], "CachedMethods": { "Quantity": 2, "Items": ["GET","HEAD"] } },
     "Compress": true,
     "ForwardedValues": { "QueryString": false, "Cookies": { "Forward": "none" } },
