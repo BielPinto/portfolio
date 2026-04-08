@@ -716,6 +716,50 @@ Upload:
 aws s3 sync apps/web/dist "s3://$S3_BUCKET" --delete
 ```
 
+### AccessDenied ao abrir o URL do S3 no browser
+
+O hostname **`$S3_BUCKET.s3.$AWS_REGION.amazonaws.com`** e o **endpoint REST** do S3, nao o “website”. Na **raiz** `/` o pedido anonimo costuma falhar com `AccessDenied` porque:
+
+1. exige `s3:ListBucket` (nao concedido por defeito), ou
+2. os objetos sao **privados** (sem politica de leitura publica `s3:GetObject`).
+
+**O URL publico para utilizadores finais** deve ser o **dominio CloudFront** (secao abaixo), nao o S3 direto.
+
+**Teste rapido sem politica:** `https://$S3_BUCKET.s3.$AWS_REGION.amazonaws.com/index.html` — se tambem der `AccessDenied`, falta politica de leitura nos objetos.
+
+**404 “Unexpected Application Error” no `/index.html`:** O React Router usa rotas em `/`, `/projects`, etc.; o pathname `/index.html` **nao** e a home. A app redireciona `/index.html` → `/`. Em producao use a **raiz** do CloudFront (`https://xxxx.cloudfront.net/`), nao o URL do objecto S3 com sufixo `index.html`, para evitar confusao.
+
+**Opcional — bucket legivel publicamente (so objetos, SPA estatico):** primeiro permitir politicas no bucket (ajuste conforme a politica da tua org):
+
+```bash
+aws s3api put-public-access-block --bucket "$S3_BUCKET" \
+  --public-access-block-configuration \
+  "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=false,RestrictPublicBuckets=false"
+```
+
+Depois politica apenas para `GetObject` em `/*`:
+
+```bash
+cat > /tmp/s3-bucket-policy.json <<POL
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadObjects",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::${S3_BUCKET}/*"
+    }
+  ]
+}
+POL
+
+aws s3api put-bucket-policy --bucket "$S3_BUCKET" --policy file:///tmp/s3-bucket-policy.json
+```
+
+Em producao e mais seguro **manter o bucket privado** e usar **CloudFront com Origin Access Control (OAC)**; o runbook abaixo usa origem S3 “classica” — se o CF nao conseguir ir buscar ficheiros, passe a OAC ou garanta leitura compativel com a origem escolhida.
+
 Criar distribuicao CloudFront (simples, sem custom domain):
 
 ```bash

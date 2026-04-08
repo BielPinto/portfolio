@@ -23,6 +23,9 @@ coverage.out
 apps/api/bin/
 apps/api/api
 
+# Local AWS CLI scratch (runbook heredocs)
+tmp-cloudfront-config.json
+
 # Logs / test artifacts
 *.log
 playwright-report/
