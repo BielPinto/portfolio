@@ -2,7 +2,7 @@
 
 Runbook pratico para publicar o portfolio em AWS sem Kubernetes, usando:
 
-- API em **`App Runner`** *ou* **`ECS Fargate` + ALB** (imagem no `ECR`)
+- API em `**App Runner**` *ou* `**ECS Fargate` + ALB** (imagem no `ECR`)
 - Front em `S3 + CloudFront`
 - Banco em `RDS PostgreSQL`
 - Segredos em `Secrets Manager`
@@ -73,7 +73,7 @@ Se aparecer:
 
 `The specified backup retention period exceeds the maximum available to free tier customers`
 
-significa que a conta ainda esta no limite Free Tier do RDS: use **`--backup-retention-period 0`** (sem backups automaticos) **ou** aumente o plano da conta e volte a usar retenção (por exemplo 7 dias).
+significa que a conta ainda esta no limite Free Tier do RDS: use `**--backup-retention-period 0**` (sem backups automaticos) **ou** aumente o plano da conta e volte a usar retenção (por exemplo 7 dias).
 
 O comando `DB_HOST=...` deve ser **uma linha so** com `--query 'DBInstances[0].Endpoint.Address'`; se colar errado, o shell mistura linhas e quebra o `--query`.
 
@@ -271,7 +271,7 @@ EXEC_ROLE_ARN="$(aws iam get-role --role-name "${PROJECT}-${ENV}-ecs-exec" \
 
 Ordem do bloco: (1) ler ARN do segredo, (2) gerar task definition e registar, (3) rede `awsvpc` em ficheiro, (4) criar servico Fargate ligado ao ALB, (5) esperar estabilizar, (6) exportar URL publica.
 
-O servico usa **`--health-check-grace-period-seconds 120`** para o ALB nao marcar targets como unhealthy durante o arranque (ex.: migrações no boot). Ajuste se precisar de mais ou menos tempo.
+O servico usa `**--health-check-grace-period-seconds 120`** para o ALB nao marcar targets como unhealthy durante o arranque (ex.: migrações no boot). Ajuste se precisar de mais ou menos tempo.
 
 ```bash
 # 1) ARN completo do segredo (necessario para valueFrom por chave JSON)
@@ -381,7 +381,7 @@ aws ecs describe-services --region "$AWS_REGION" \
 
 Esperado: `status` = `ACTIVE`, `runningCount` = `desiredCount` (ex.: 1), e o deployment com `rolloutState` = `COMPLETED` (ou em progresso pouco tempo apos criar).
 
-2. **Ha pelo menos uma task em execucao**
+1. **Ha pelo menos uma task em execucao**
 
 ```bash
 aws ecs list-tasks --region "$AWS_REGION" \
@@ -392,7 +392,7 @@ aws ecs list-tasks --region "$AWS_REGION" \
 
 Esperado: um ou mais ARNs de task (lista nao vazia).
 
-3. **Detalhe da task (se falhar, ver motivo)**
+1. **Detalhe da task (se falhar, ver motivo)**
 
 Sem tasks em `RUNNING`, `taskArns[0]` vem vazio ou `None` e `describe-tasks` falha — por isso o bloco abaixo trata os dois casos.
 
@@ -430,7 +430,7 @@ fi
 
 Esperado com API saudavel: `lastStatus` = `RUNNING`, `healthStatus` = `HEALTHY` ou `UNKNOWN` (sem health check de contentor no task definition).
 
-4. **ALB: target group com target healthy** (se o passo 4 correu com `--load-balancers`)
+1. **ALB: target group com target healthy** (se o passo 4 correu com `--load-balancers`)
 
 ```bash
 TG_FROM_SVC="$(aws ecs describe-services --region "$AWS_REGION" \
@@ -443,7 +443,7 @@ aws elbv2 describe-target-health --region "$AWS_REGION" --target-group-arn "$TG_
 
 Esperado: pelo menos um target com `State` = `healthy` (apos o grace period; no arranque pode aparecer `initial` ou `unhealthy` durante ~2 min). Se `TG_FROM_SVC` for `None`, o servico nao ficou ligado ao ALB (rever `create-service` e `--load-balancers`).
 
-5. **HTTP no endpoint publico**
+1. **HTTP no endpoint publico**
 
 ```bash
 curl -sS -o /dev/null -w "%{http_code}\n" "${API_PUBLIC_URL}/health"
@@ -455,7 +455,7 @@ Se `describe-services` devolver `length(services) == 0` ou erro de cluster, o pa
 
 ### Depuracao: HTTP 503 em `/health`
 
-O handler [`apps/api/internal/handlers/health.go`](../../apps/api/internal/handlers/health.go) devolve **503** quando o **ping ao Postgres falha** (corpo JSON tipico: `"status":"unhealthy"`, `"database":"down"`). O ALB **encaminha** esse 503; nao confundir apenas com “falha do load balancer” sem ver o corpo.
+O handler `[apps/api/internal/handlers/health.go](../../apps/api/internal/handlers/health.go)` devolve **503** quando o **ping ao Postgres falha** (corpo JSON tipico: `"status":"unhealthy"`, `"database":"down"`). O ALB **encaminha** esse 503; nao confundir apenas com “falha do load balancer” sem ver o corpo.
 
 **1) Ver se o 503 vem da API (BD) ou se nao ha target saudavel**
 
@@ -496,12 +496,14 @@ aws ecs describe-services --region "$AWS_REGION" \
 
 **3) Checklist RDS + ECS (causa mais comum do 503 neste projeto)**
 
-| Verificacao | Accao |
-| ----------- | ----- |
-| SG do RDS | Inbound TCP **5432** com **source** = security group das tasks (`${PROJECT}-${ENV}-ecs-sg`), nao apenas `0.0.0.0/0` se a task estiver noutra VPC. |
-| Mesma VPC | RDS criado na **default VPC** do runbook e subnets ECS tambem na default (secao 5A.1). |
-| `DATABASE_URL` | Host = **endpoint** do RDS (nao `localhost`); password com caracteres especiais **URL-encoded**; `sslmode=require` (ou o modo que o RDS exige). |
-| Segredo na task | `valueFrom` `ARN:DATABASE_URL::` coincide com as chaves do JSON no Secrets Manager. |
+
+| Verificacao     | Accao                                                                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SG do RDS       | Inbound TCP **5432** com **source** = security group das tasks (`${PROJECT}-${ENV}-ecs-sg`), nao apenas `0.0.0.0/0` se a task estiver noutra VPC. |
+| Mesma VPC       | RDS criado na **default VPC** do runbook e subnets ECS tambem na default (secao 5A.1).                                                            |
+| `DATABASE_URL`  | Host = **endpoint** do RDS (nao `localhost`); password com caracteres especiais **URL-encoded**; `sslmode=require` (ou o modo que o RDS exige).   |
+| Segredo na task | `valueFrom` `ARN:DATABASE_URL::` coincide com as chaves do JSON no Secrets Manager.                                                               |
+
 
 **4) Health check “so app” (opcional, melhoria futura)**
 
@@ -517,17 +519,19 @@ Significa que o processo dentro da imagem **terminou com erro** (nao e um crash 
 aws logs tail "/ecs/${PROJECT}-${ENV}-api" --region "$AWS_REGION" --since 30m --format short
 ```
 
-Procure linhas como `failed to load config`, `database connection failed`, `migrations failed` ou `invalid RATE_LIMIT` — o arranque em [`apps/api/cmd/api/main.go`](../../apps/api/cmd/api/main.go) faz `os.Exit(1)` nesses pontos.
+Procure linhas como `failed to load config`, `database connection failed`, `migrations failed` ou `invalid RATE_LIMIT` — o arranque em `[apps/api/cmd/api/main.go](../../apps/api/cmd/api/main.go)` faz `os.Exit(1)` nesses pontos.
 
 **2) Checklist rapido (ordem frequente)**
 
-| Sintoma nos logs | O que rever |
-| ---------------- | ----------- |
-| `database connection failed` | `DATABASE_URL` no Secrets Manager; RDS a aceitar trafego do security group das tasks ECS (porta 5432); mesma VPC que o default usado no runbook; `sslmode=require` coerente com o RDS. |
-| erro com `/tmp/.s.PGSQL.5432` ou `dial unix` | **`DATABASE_URL` ausente ou com host `localhost`**: no Fargate/Linux o cliente Postgres tenta **socket Unix**, nao TCP. O URL tem de usar o **endpoint DNS do RDS** (`*.rds.amazonaws.com`). Confirme injecao do segredo (`valueFrom` `...:DATABASE_URL::`) e `put-secret-value` com JSON valido. |
-| `migrations failed` | Utilizador da BD com permissoes; BD acessiveis; versao Postgres compativel. |
-| `failed to load config` | `DATABASE_URL` vazio ou mal formado; caracteres especiais na password **tem de estar URL-encoded** na connection string. |
-| `invalid RATE_LIMIT` | Variavel `RATE_LIMIT` invalida (o runbook usa `100-M`, que e valida). |
+
+| Sintoma nos logs                             | O que rever                                                                                                                                                                                                                                                                                       |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `database connection failed`                 | `DATABASE_URL` no Secrets Manager; RDS a aceitar trafego do security group das tasks ECS (porta 5432); mesma VPC que o default usado no runbook; `sslmode=require` coerente com o RDS.                                                                                                            |
+| erro com `/tmp/.s.PGSQL.5432` ou `dial unix` | `**DATABASE_URL` ausente ou com host `localhost`**: no Fargate/Linux o cliente Postgres tenta **socket Unix**, nao TCP. O URL tem de usar o **endpoint DNS do RDS** (`*.rds.amazonaws.com`). Confirme injecao do segredo (`valueFrom` `...:DATABASE_URL::`) e `put-secret-value` com JSON valido. |
+| `migrations failed`                          | Utilizador da BD com permissoes; BD acessiveis; versao Postgres compativel.                                                                                                                                                                                                                       |
+| `failed to load config`                      | `DATABASE_URL` vazio ou mal formado; caracteres especiais na password **tem de estar URL-encoded** na connection string.                                                                                                                                                                          |
+| `invalid RATE_LIMIT`                         | Variavel `RATE_LIMIT` invalida (o runbook usa `100-M`, que e valida).                                                                                                                                                                                                                             |
+
 
 **3) Confirmar o segredo que a task ve**
 
@@ -718,7 +722,7 @@ aws s3 sync apps/web/dist "s3://$S3_BUCKET" --delete
 
 ### AccessDenied ao abrir o URL do S3 no browser
 
-O hostname **`$S3_BUCKET.s3.$AWS_REGION.amazonaws.com`** e o **endpoint REST** do S3, nao o “website”. Na **raiz** `/` o pedido anonimo costuma falhar com `AccessDenied` porque:
+O hostname `**$S3_BUCKET.s3.$AWS_REGION.amazonaws.com**` e o **endpoint REST** do S3, nao o “website”. Na **raiz** `/` o pedido anonimo costuma falhar com `AccessDenied` porque:
 
 1. exige `s3:ListBucket` (nao concedido por defeito), ou
 2. os objetos sao **privados** (sem politica de leitura publica `s3:GetObject`).
@@ -874,7 +878,7 @@ aws s3 sync <path_dist_antigo> "s3://$S3_BUCKET" --delete
 - `CORS_ORIGINS` com dominio exato do frontend
 - segredo so em Secrets Manager
 - RDS com backup ativo
-- logs e alarmes CloudWatch
+- `CORS_ORIGINS`
 - budget AWS (50/80/100%)
 
 ## 12) Quando considerar Kubernetes
@@ -885,3 +889,4 @@ Considere EKS apenas quando houver 2+ sinais:
 - necessidade forte de rollout canary/blue-green
 - alta demanda com autoscaling horizontal frequente
 - equipe pronta para operar cluster 24x7
+
