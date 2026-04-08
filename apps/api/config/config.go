@@ -61,9 +61,33 @@ func parseCSVOrigins(raw string) []string {
 	return out
 }
 
+func runningOnECS() bool {
+	return strings.TrimSpace(os.Getenv("ECS_CONTAINER_METADATA_URI")) != ""
+}
+
+func validateDatabaseURLForECS(raw string) error {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return fmt.Errorf("DATABASE_URL: invalid URL: %w", err)
+	}
+	host := strings.ToLower(strings.TrimSpace(u.Hostname()))
+	if host == "" || host == "localhost" {
+		return fmt.Errorf("DATABASE_URL must use the RDS TCP hostname (e.g. *.rds.amazonaws.com), not localhost or an empty host; on Linux containers localhost uses a Unix socket (/tmp/.s.PGSQL.*) and cannot reach RDS")
+	}
+	return nil
+}
+
 func loadDatabaseURL() (string, error) {
 	if raw := strings.TrimSpace(os.Getenv("DATABASE_URL")); raw != "" {
+		if runningOnECS() {
+			if err := validateDatabaseURLForECS(raw); err != nil {
+				return "", err
+			}
+		}
 		return raw, nil
+	}
+	if runningOnECS() {
+		return "", fmt.Errorf("DATABASE_URL is required on ECS/Fargate (inject from Secrets Manager); without it defaults use localhost, which resolves to a Unix socket inside the container and cannot reach RDS")
 	}
 	host := getenvDefault("DB_HOST", "localhost")
 	dbPort := getenvDefault("DB_PORT", "5432")

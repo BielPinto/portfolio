@@ -7,6 +7,7 @@ import (
 )
 
 func TestLoad_defaultPortAndComposedDatabaseURL(t *testing.T) {
+	t.Setenv("ECS_CONTAINER_METADATA_URI", "")
 	t.Setenv("DATABASE_URL", "")
 	t.Setenv("PORT", "")
 	t.Setenv("DB_HOST", "127.0.0.1")
@@ -32,6 +33,7 @@ func TestLoad_defaultPortAndComposedDatabaseURL(t *testing.T) {
 }
 
 func TestLoad_explicitDatabaseURL(t *testing.T) {
+	t.Setenv("ECS_CONTAINER_METADATA_URI", "")
 	want := "postgres://u:p@db.example:5432/mydb?sslmode=require"
 	t.Setenv("DATABASE_URL", want)
 	t.Setenv("PORT", "3000")
@@ -45,6 +47,32 @@ func TestLoad_explicitDatabaseURL(t *testing.T) {
 	}
 	if cfg.Port != "3000" {
 		t.Fatalf("port %q", cfg.Port)
+	}
+}
+
+func TestLoad_ECS_requiresDatabaseURL(t *testing.T) {
+	t.Setenv("ECS_CONTAINER_METADATA_URI", "http://169.254.170.2/v4/abc")
+	t.Setenv("DATABASE_URL", "")
+	t.Setenv("PORT", "8080")
+	_, err := Load()
+	if err == nil {
+		t.Fatal("expected error when DATABASE_URL missing on ECS")
+	}
+	if !strings.Contains(err.Error(), "DATABASE_URL") {
+		t.Fatalf("err: %v", err)
+	}
+}
+
+func TestLoad_ECS_rejectsLocalhostDatabaseURL(t *testing.T) {
+	t.Setenv("ECS_CONTAINER_METADATA_URI", "http://169.254.170.2/v4/abc")
+	t.Setenv("DATABASE_URL", "postgres://u:p@localhost:5432/mydb?sslmode=disable")
+	t.Setenv("PORT", "8080")
+	_, err := Load()
+	if err == nil {
+		t.Fatal("expected error for localhost DATABASE_URL on ECS")
+	}
+	if !strings.Contains(err.Error(), "localhost") {
+		t.Fatalf("err: %v", err)
 	}
 }
 
